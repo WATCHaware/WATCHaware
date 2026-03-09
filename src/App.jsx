@@ -42,7 +42,7 @@ const STYLE_TAG = `
 
 const BASE = {
   app: {
-    backgroundColor: COLORS.oatmeal,
+    backgroundColor: "transparent",
     minHeight: "100vh",
     fontFamily: "'SF Pro Display','Helvetica Neue',system-ui,sans-serif",
     color: COLORS.slate,
@@ -54,7 +54,7 @@ const BASE = {
   },
 };
 
-function Logo({ subtitle }) {
+function Logo({ subtitle, light }) {
   return (
     <div style={{ textAlign: "center", paddingTop: 44, paddingBottom: 4 }}>
       <div style={{
@@ -65,11 +65,11 @@ function Logo({ subtitle }) {
           0 0 60px rgba(255,255,255,0.3)
         `,
       }}>
-        <span style={{ fontWeight: 800, letterSpacing: 1 }}>WATCH</span>
-        <span style={{ fontWeight: 300, fontStyle: "italic" }}>aware</span>
+        <span style={{ fontWeight: 800, letterSpacing: 1, color: light ? COLORS.white : COLORS.slate }}>WATCH</span>
+        <span style={{ fontWeight: 300, fontStyle: "italic", color: light ? "rgba(255,255,255,0.9)" : COLORS.slate }}>aware</span>
       </div>
       {subtitle && (
-        <div style={{ fontSize: 12, color: COLORS.slateLight, marginTop: 4, letterSpacing: 0.5 }}>
+        <div style={{ fontSize: 12, color: light ? "rgba(255,255,255,0.7)" : COLORS.slateLight, marginTop: 4, letterSpacing: 0.5 }}>
           {subtitle}
         </div>
       )}
@@ -109,9 +109,11 @@ function SlideAction({ label, onComplete, color = COLORS.slate }) {
         onTouchEnd={onEnd}
         style={{
           position: "relative", height: HANDLE,
-          backgroundColor: "rgba(255,255,255,0.55)",
+          backgroundColor: "rgba(255,255,255,0.25)",
+          backdropFilter: "blur(10px)",
           borderRadius: HANDLE, cursor: "grab", userSelect: "none",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.07)",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+          border: "1px solid rgba(255,255,255,0.3)",
           touchAction: "none",
         }}
       >
@@ -127,7 +129,7 @@ function SlideAction({ label, onComplete, color = COLORS.slate }) {
           position: "absolute", width: "100%", height: "100%",
           display: "flex", alignItems: "center", justifyContent: "center",
           fontSize: 10, fontWeight: 700, letterSpacing: 1.8,
-          color: COLORS.slateLight, paddingLeft: HANDLE + 8,
+          color: "rgba(255,255,255,0.8)", paddingLeft: HANDLE + 8,
         }}>
           {label}
         </div>
@@ -162,9 +164,9 @@ function HoldButton({ onFired }) {
   return (
     <div style={{ position: "relative", width: 300, height: 300, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <svg width={300} height={300} style={{ position: "absolute", top: 0, left: 0, transform: "rotate(-90deg)" }}>
-        <circle cx={150} cy={150} r={R} fill="none" stroke="rgba(201,122,80,0.18)" strokeWidth={6} />
+        <circle cx={150} cy={150} r={R} fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth={6} />
         {holding && (
-          <circle cx={150} cy={150} r={R} fill="none" stroke={COLORS.ring} strokeWidth={6}
+          <circle cx={150} cy={150} r={R} fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth={6}
             strokeDasharray={C} strokeDashoffset={C - (progress / 100) * C} strokeLinecap="round" />
         )}
       </svg>
@@ -339,16 +341,24 @@ function PatientSOS({ onAlertFired }) {
   }, []);
 
   return (
-    <div style={{ ...BASE.app, justifyContent: "space-between", paddingBottom: 52, minHeight: "100vh" }}>
-      <Logo subtitle={`Monitoring  ·  ${time}`} />
+    <div style={{
+      ...BASE.app,
+      justifyContent: "space-between",
+      paddingBottom: 52,
+      minHeight: "100vh",
+      backgroundImage: "url('/sos-bg.png')",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+    }}>
+      <Logo subtitle={`Monitoring  ·  ${time}`} light />
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 24, flex: 1, justifyContent: "center", paddingBottom: 60 }}>
         <HoldButton onFired={onAlertFired} />
-        <div style={{ fontSize: 10, color: COLORS.slateLight, letterSpacing: 2, marginTop: -8 }}>
+        <div style={{ fontSize: 10, color: "rgba(255,255,255,0.8)", letterSpacing: 2, marginTop: -8 }}>
           HOLD 3 SECONDS TO ACTIVATE
         </div>
       </div>
       <div style={{ width: "82%", paddingBottom: 8 }}>
-        <SlideAction label="SLIDE LEFT TO RIGHT TO CANCEL" onComplete={() => {}} />
+        <SlideAction label="SLIDE LEFT TO RIGHT TO CANCEL" onComplete={() => {}} color="rgba(255,255,255,0.6)" />
       </div>
     </div>
   );
@@ -356,12 +366,20 @@ function PatientSOS({ onAlertFired }) {
 
 function CaretakerDashboard({ onSettings, alertActive, onAcknowledge }) {
   return (
-    <div style={{ ...BASE.app, justifyContent: "space-between", paddingBottom: 52, minHeight: "100vh" }}>
+    <div style={{
+      ...BASE.app,
+      justifyContent: "space-between",
+      paddingBottom: 52,
+      minHeight: "100vh",
+      backgroundImage: "url('/caretaker-bg.png')",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+    }}>
       <div style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "0 24px" }}>
-        <Logo />
+        <Logo light />
         <button onClick={onSettings} style={{
           background: "none", border: "none", cursor: "pointer",
-          marginTop: 44, fontSize: 20, color: COLORS.terracotta,
+          marginTop: 44, fontSize: 20,
         }}>⚙️</button>
       </div>
 
@@ -399,7 +417,13 @@ function CaretakerDashboard({ onSettings, alertActive, onAcknowledge }) {
           </div>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, width: "78%" }}>
+        <div style={{
+          display: "flex", flexDirection: "column", gap: 12, width: "78%",
+          backgroundColor: "rgba(255,255,255,0.15)",
+          backdropFilter: "blur(10px)",
+          borderRadius: 16, padding: "14px 18px",
+          border: "1px solid rgba(255,255,255,0.25)",
+        }}>
           {[
             { icon: "〜", label: "Vital Signal",  value: alertActive ? "MISSING" : "Stable", alert: alertActive },
             { icon: "🔋", label: "Watch Battery", value: "88%",    alert: false },
@@ -407,8 +431,8 @@ function CaretakerDashboard({ onSettings, alertActive, onAcknowledge }) {
           ].map(({ icon, label, value, alert }) => (
             <div key={label} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, fontWeight: 700 }}>
               <span>{icon}</span>
-              <span style={{ color: COLORS.slate }}>{label}: </span>
-              <span style={{ color: alert ? COLORS.terracotta : COLORS.slate }}>{value}</span>
+              <span style={{ color: COLORS.white }}>{label}: </span>
+              <span style={{ color: alert ? "#FFB3A0" : "rgba(255,255,255,0.9)" }}>{value}</span>
             </div>
           ))}
         </div>
@@ -416,7 +440,7 @@ function CaretakerDashboard({ onSettings, alertActive, onAcknowledge }) {
 
       {alertActive && (
         <div style={{ width: "82%", display: "flex", flexDirection: "column", gap: 8, paddingBottom: 8 }}>
-          <div style={{ fontSize: 10, color: COLORS.terracotta, letterSpacing: 1.5, textAlign: "center", fontWeight: 700 }}>
+          <div style={{ fontSize: 10, color: COLORS.white, letterSpacing: 1.5, textAlign: "center", fontWeight: 700 }}>
             ALERT ACTIVE — ACKNOWLEDGE TO SILENCE
           </div>
           <SlideAction label="SLIDE TO ACKNOWLEDGE" onComplete={onAcknowledge} color={COLORS.terracotta} />
@@ -434,7 +458,7 @@ function SettingsScreen({ onBack, sleepStart, sleepEnd, onSleepChange }) {
   const [editing,   setEditing]   = useState(null);
 
   return (
-    <div style={{ ...BASE.app, paddingBottom: 52, minHeight: "100vh", overflowY: "auto" }}>
+    <div style={{ ...BASE.app, paddingBottom: 52, minHeight: "100vh", overflowY: "auto", backgroundColor: COLORS.oatmeal }}>
       <div style={{ width: "100%", display: "flex", alignItems: "center", padding: "0 20px" }}>
         <button onClick={onBack} style={{
           background: "none", border: "none", cursor: "pointer",
@@ -544,7 +568,7 @@ export default function WATCHaware() {
   ];
 
   return (
-    <div style={{ backgroundColor: "#EDE8DC", minHeight: "100vh", width: "100%", overflowX: "hidden" }}>
+    <div style={{ minHeight: "100vh", width: "100%", overflowX: "hidden" }}>
       <style>{STYLE_TAG}</style>
 
       {!locked && (
@@ -594,3 +618,10 @@ export default function WATCHaware() {
     </div>
   );
 }
+```
+
+Now drop `sos-bg.png` and `caretaker-bg.png` into your `public/` folder, then commit and push all three changes together:
+```
+git add .
+git commit -m "add background images"
+git push
