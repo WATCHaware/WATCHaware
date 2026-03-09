@@ -569,7 +569,7 @@ export default function WATCHaware() {
   ];
 
   return (
-    <div style={{ backgroundColor: "#EDE8DC", minHeight: "100vh" }}>
+    <div style={{ backgroundColor: "#EDE8DC", minHeight: "100vh", width: "100%", overflowX: "hidden" }}>
       <style>{STYLE_TAG}</style>
       <div style={{
         display: "flex", gap: 6, padding: "10px 16px",
@@ -592,7 +592,7 @@ export default function WATCHaware() {
           </button>
         ))}
       </div>
-      <div style={{ paddingTop: 48, maxWidth: 430, margin: "0 auto" }}>
+      <div style={{ paddingTop: 48, width: "100%", maxWidth: 430, margin: "0 auto" }}>
         {screen === "patient" && (
           <PatientSOS onAlertFired={() => { setAlertActive(true); setScreen("caretaker"); }} />
         )}
