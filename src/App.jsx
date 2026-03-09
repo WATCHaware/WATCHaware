@@ -174,18 +174,28 @@ function HoldButton({ onFired }) {
         onTouchEnd={end}
         style={{
           width: 258, height: 258, borderRadius: "50%",
-          backgroundColor: COLORS.terracotta,
+          background: holding
+            ? "radial-gradient(circle at 38% 28%, #E8956A, #D1835C 55%, #A8622E)"
+            : "radial-gradient(circle at 38% 28%, #E8956A, #D1835C 55%, #B06030)",
           display: "flex", alignItems: "center", justifyContent: "center",
           boxShadow: holding
-            ? "0 8px 50px rgba(211,131,92,0.55)"
-            : "0 12px 40px rgba(211,131,92,0.28)",
+            ? "0 8px 50px rgba(211,131,92,0.55), inset 0 -8px 20px rgba(0,0,0,0.2), inset 0 3px 8px rgba(255,255,255,0.15)"
+            : "0 12px 40px rgba(211,131,92,0.28), inset 0 -8px 20px rgba(0,0,0,0.15), inset 0 3px 8px rgba(255,255,255,0.2)",
           cursor: "pointer", userSelect: "none",
           transform: holding ? "scale(0.96)" : "scale(1)",
           transition: "transform 0.1s ease, box-shadow 0.2s ease",
           touchAction: "none",
+          position: "relative", overflow: "hidden",
         }}
       >
-        <span style={{ fontSize: 50, fontWeight: 700, color: COLORS.white, letterSpacing: 3 }}>SOS</span>
+        <div style={{
+          position: "absolute", top: 14, left: 38,
+          width: 100, height: 48, borderRadius: "50%",
+          background: "rgba(255,255,255,0.18)",
+          filter: "blur(6px)", transform: "rotate(-20deg)",
+          pointerEvents: "none",
+        }} />
+        <span style={{ fontSize: 50, fontWeight: 700, color: COLORS.white, letterSpacing: 3, position: "relative" }}>SOS</span>
       </div>
     </div>
   );
@@ -331,7 +341,7 @@ function PatientSOS({ onAlertFired }) {
   return (
     <div style={{ ...BASE.app, justifyContent: "space-between", paddingBottom: 52, minHeight: "100vh" }}>
       <Logo subtitle={`Monitoring  ·  ${time}`} />
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, flex: 1, justifyContent: "center" }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 24, flex: 1, justifyContent: "center", paddingBottom: 60 }}>
         <HoldButton onFired={onAlertFired} />
         <div style={{ fontSize: 10, color: COLORS.slateLight, letterSpacing: 2, marginTop: -8 }}>
           HOLD 3 SECONDS TO ACTIVATE
@@ -360,54 +370,30 @@ function CaretakerDashboard({ onSettings, alertActive, onAcknowledge }) {
           <div style={{
             position: "absolute", top: 12, left: 12,
             width: 280, height: 280, borderRadius: "50%",
-            backgroundColor: alertActive
-              ? "rgba(211,131,92,0.25)"
-              : "rgba(168,195,179,0.25)",
-            filter: "blur(20px)",
-            transition: "background-color 0.5s ease",
-            zIndex: 0,
+            backgroundColor: alertActive ? "rgba(211,131,92,0.25)" : "rgba(168,195,179,0.25)",
+            filter: "blur(20px)", transition: "background-color 0.5s ease", zIndex: 0,
           }} />
           <div style={{
             position: "relative", width: 280, height: 280, borderRadius: "50%",
             background: alertActive
               ? "radial-gradient(circle at 38% 32%, #E8906A, #D1835C 60%, #B8693E)"
               : "radial-gradient(circle at 38% 32%, #C2D9CF, #A8C3B3 60%, #8AADA0)",
-            display: "flex", flexDirection: "column",
-            alignItems: "center", justifyContent: "center",
-            animation: alertActive
-              ? "pulse 1.4s ease-in-out infinite"
-              : "breathe 4s ease-in-out infinite",
-            transition: "background 0.5s ease",
-            zIndex: 1,
+            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+            animation: alertActive ? "pulse 1.4s ease-in-out infinite" : "breathe 4s ease-in-out infinite",
+            transition: "background 0.5s ease", zIndex: 1,
             boxShadow: "inset 0 -8px 20px rgba(0,0,0,0.12), inset 0 2px 6px rgba(255,255,255,0.25)",
           }}>
             <div style={{
-              position: "absolute", top: 18, left: 32,
-              width: 90, height: 44, borderRadius: "50%",
-              background: "rgba(255,255,255,0.22)",
-              filter: "blur(6px)", transform: "rotate(-20deg)",
-              pointerEvents: "none",
+              position: "absolute", top: 18, left: 32, width: 90, height: 44, borderRadius: "50%",
+              background: "rgba(255,255,255,0.22)", filter: "blur(6px)", transform: "rotate(-20deg)", pointerEvents: "none",
             }} />
-            <div style={{
-              position: "absolute", inset: 0, borderRadius: "50%",
-              border: "1.5px solid rgba(255,255,255,0.18)",
-              pointerEvents: "none",
-            }} />
-            <div style={{
-              position: "absolute", width: "55%", height: 1,
-              backgroundColor: "rgba(255,255,255,0.3)", top: "46%",
-            }} />
-            <div style={{
-              fontSize: 18, marginBottom: 18,
-              textShadow: "0 0 12px rgba(255,255,255,0.4)", lineHeight: 1,
-            }}>
+            <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1.5px solid rgba(255,255,255,0.18)", pointerEvents: "none" }} />
+            <div style={{ position: "absolute", width: "55%", height: 1, backgroundColor: "rgba(255,255,255,0.3)", top: "46%" }} />
+            <div style={{ fontSize: 18, marginBottom: 18, textShadow: "0 0 12px rgba(255,255,255,0.4)", lineHeight: 1 }}>
               <span style={{ fontWeight: 800, color: COLORS.slate, letterSpacing: 1 }}>WATCH</span>
               <span style={{ fontWeight: 300, color: COLORS.slate, fontStyle: "italic" }}>aware</span>
             </div>
-            <div style={{
-              fontSize: 11, fontWeight: 600, letterSpacing: 3,
-              color: "rgba(255,255,255,0.9)", marginTop: 16,
-            }}>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: 3, color: "rgba(255,255,255,0.9)", marginTop: 16 }}>
               {alertActive ? "⚠️ ALERT" : "MONITORING"}
             </div>
           </div>
@@ -433,11 +419,7 @@ function CaretakerDashboard({ onSettings, alertActive, onAcknowledge }) {
           <div style={{ fontSize: 10, color: COLORS.terracotta, letterSpacing: 1.5, textAlign: "center", fontWeight: 700 }}>
             ALERT ACTIVE — ACKNOWLEDGE TO SILENCE
           </div>
-          <SlideAction
-            label="SLIDE TO ACKNOWLEDGE"
-            onComplete={onAcknowledge}
-            color={COLORS.terracotta}
-          />
+          <SlideAction label="SLIDE TO ACKNOWLEDGE" onComplete={onAcknowledge} color={COLORS.terracotta} />
         </div>
       )}
     </div>
@@ -447,7 +429,7 @@ function CaretakerDashboard({ onSettings, alertActive, onAcknowledge }) {
 function SettingsScreen({ onBack, sleepStart, sleepEnd, onSleepChange }) {
   const [flatline,  setFlatline]  = useState(true);
   const [offline,   setOffline]   = useState(true);
-  const [patient,   setPatient]   = useState("John Smith");
+  const [patient,   setPatient]   = useState("Kathleen Cousens");
   const [caretaker, setCaretaker] = useState("Ben");
   const [editing,   setEditing]   = useState(null);
 
@@ -465,13 +447,11 @@ function SettingsScreen({ onBack, sleepStart, sleepEnd, onSleepChange }) {
       <div style={{
         width: "86%", backgroundColor: COLORS.white, borderRadius: 24,
         padding: "20px 24px", boxShadow: "0 20px 50px rgba(0,0,0,0.08)",
-        marginTop: 8, marginBottom: 12,
-        border: `2px solid ${COLORS.terracotta}22`,
+        marginTop: 8, marginBottom: 12, border: `2px solid ${COLORS.terracotta}22`,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
           <div style={{
-            width: 36, height: 36, borderRadius: "50%",
-            backgroundColor: COLORS.terracotta,
+            width: 36, height: 36, borderRadius: "50%", backgroundColor: COLORS.terracotta,
             display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
           }}>
             <span style={{ fontSize: 16 }}>⚡</span>
@@ -484,8 +464,7 @@ function SettingsScreen({ onBack, sleepStart, sleepEnd, onSleepChange }) {
         ].map(({ label, value, set }) => (
           <div key={label} style={{
             display: "flex", justifyContent: "space-between", alignItems: "center",
-            paddingBottom: 12, marginBottom: 12,
-            borderBottom: "1px solid rgba(0,0,0,0.05)",
+            paddingBottom: 12, marginBottom: 12, borderBottom: "1px solid rgba(0,0,0,0.05)",
           }}>
             <span style={{ fontSize: 13, color: COLORS.slateLight }}>{label}</span>
             <Toggle value={value} onChange={set} />
@@ -512,28 +491,21 @@ function SettingsScreen({ onBack, sleepStart, sleepEnd, onSleepChange }) {
         ].map(({ label, value, key }) => (
           <div key={key} style={{
             display: "flex", justifyContent: "space-between", alignItems: "center",
-            paddingBottom: 10, marginBottom: 10,
-            borderBottom: "1px solid rgba(0,0,0,0.05)",
+            paddingBottom: 10, marginBottom: 10, borderBottom: "1px solid rgba(0,0,0,0.05)",
           }}>
             <span style={{ fontSize: 13, color: COLORS.slateLight }}>{label}</span>
             {editing === key
               ? <input autoFocus value={value}
-                  onChange={e => key === "patient"
-                    ? setPatient(e.target.value)
-                    : setCaretaker(e.target.value)}
+                  onChange={e => key === "patient" ? setPatient(e.target.value) : setCaretaker(e.target.value)}
                   onBlur={() => setEditing(null)}
                   style={{
-                    border: "none",
-                    borderBottom: `1px solid ${COLORS.terracotta}`,
+                    border: "none", borderBottom: `1px solid ${COLORS.terracotta}`,
                     background: "none", fontSize: 13, fontWeight: 600,
-                    color: COLORS.slate, outline: "none",
-                    textAlign: "right", width: 140,
+                    color: COLORS.slate, outline: "none", textAlign: "right", width: 140,
                   }}
                 />
-              : <span onClick={() => setEditing(key)}
-                  style={{ fontSize: 13, fontWeight: 600, cursor: "text" }}>
-                  {value}{" "}
-                  <span style={{ color: COLORS.slateLight, fontSize: 11 }}>✎</span>
+              : <span onClick={() => setEditing(key)} style={{ fontSize: 13, fontWeight: 600, cursor: "text" }}>
+                  {value}{" "}<span style={{ color: COLORS.slateLight, fontSize: 11 }}>✎</span>
                 </span>
             }
           </div>
@@ -546,8 +518,7 @@ function SettingsScreen({ onBack, sleepStart, sleepEnd, onSleepChange }) {
           width: "100%", padding: "13px 0",
           backgroundColor: COLORS.terracotta, color: COLORS.white,
           border: "none", borderRadius: 13, fontSize: 14, fontWeight: 600,
-          cursor: "pointer", boxShadow: "0 4px 14px rgba(211,131,92,0.28)",
-          letterSpacing: 0.5,
+          cursor: "pointer", boxShadow: "0 4px 14px rgba(211,131,92,0.28)", letterSpacing: 0.5,
         }}>
           + Add Caretaker
         </button>
@@ -557,7 +528,11 @@ function SettingsScreen({ onBack, sleepStart, sleepEnd, onSleepChange }) {
 }
 
 export default function WATCHaware() {
-  const [screen,      setScreen]      = useState("patient");
+  const params  = new URLSearchParams(window.location.search);
+  const view    = params.get("view");
+  const locked  = view === "patient" || view === "caretaker";
+
+  const [screen,      setScreen]      = useState(view === "caretaker" ? "caretaker" : "patient");
   const [alertActive, setAlertActive] = useState(false);
   const [sleepStart,  setSleepStart]  = useState(22);
   const [sleepEnd,    setSleepEnd]    = useState(6);
@@ -571,39 +546,43 @@ export default function WATCHaware() {
   return (
     <div style={{ backgroundColor: "#EDE8DC", minHeight: "100vh", width: "100%", overflowX: "hidden" }}>
       <style>{STYLE_TAG}</style>
-      <div style={{
-        display: "flex", gap: 6, padding: "10px 16px",
-        position: "fixed", top: 0, zIndex: 100, width: "100%",
-        backgroundColor: "rgba(237,232,220,0.92)",
-        backdropFilter: "blur(10px)",
-        borderBottom: "1px solid rgba(0,0,0,0.05)",
-        justifyContent: "center",
-      }}>
-        {tabs.map(({ id, label }) => (
-          <button key={id} onClick={() => setScreen(id)} style={{
-            padding: "6px 18px", borderRadius: 20, border: "none",
-            fontSize: 12, fontWeight: 600, cursor: "pointer",
-            backgroundColor: screen === id ? COLORS.terracotta : "rgba(255,255,255,0.55)",
-            color: screen === id ? COLORS.white : COLORS.slate,
-            boxShadow: screen === id ? "0 2px 8px rgba(211,131,92,0.28)" : "none",
-            transition: "all 0.2s ease",
-          }}>
-            {label}{id === "caretaker" && alertActive ? " 🔴" : ""}
-          </button>
-        ))}
-      </div>
-      <div style={{ paddingTop: 48, width: "100%", maxWidth: 430, margin: "0 auto" }}>
-        {screen === "patient" && (
-          <PatientSOS onAlertFired={() => { setAlertActive(true); setScreen("caretaker"); }} />
+
+      {!locked && (
+        <div style={{
+          display: "flex", gap: 6, padding: "10px 16px",
+          position: "fixed", top: 0, zIndex: 100, width: "100%",
+          backgroundColor: "rgba(237,232,220,0.92)",
+          backdropFilter: "blur(10px)",
+          borderBottom: "1px solid rgba(0,0,0,0.05)",
+          justifyContent: "center",
+        }}>
+          {tabs.map(({ id, label }) => (
+            <button key={id} onClick={() => setScreen(id)} style={{
+              padding: "6px 18px", borderRadius: 20, border: "none",
+              fontSize: 12, fontWeight: 600, cursor: "pointer",
+              backgroundColor: screen === id ? COLORS.terracotta : "rgba(255,255,255,0.55)",
+              color: screen === id ? COLORS.white : COLORS.slate,
+              boxShadow: screen === id ? "0 2px 8px rgba(211,131,92,0.28)" : "none",
+              transition: "all 0.2s ease",
+            }}>
+              {label}{id === "caretaker" && alertActive ? " 🔴" : ""}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div style={{ paddingTop: locked ? 0 : 48, maxWidth: 430, margin: "0 auto", width: "100%" }}>
+        {(screen === "patient" || (locked && view === "patient")) && (
+          <PatientSOS onAlertFired={() => { setAlertActive(true); if (!locked) setScreen("caretaker"); }} />
         )}
-        {screen === "caretaker" && (
+        {(screen === "caretaker" || (locked && view === "caretaker")) && (
           <CaretakerDashboard
-            onSettings={() => setScreen("settings")}
+            onSettings={() => { if (!locked) setScreen("settings"); }}
             alertActive={alertActive}
             onAcknowledge={() => setAlertActive(false)}
           />
         )}
-        {screen === "settings" && (
+        {screen === "settings" && !locked && (
           <SettingsScreen
             onBack={() => setScreen("caretaker")}
             sleepStart={sleepStart}
