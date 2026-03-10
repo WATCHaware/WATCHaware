@@ -160,61 +160,6 @@ const HAPTICS = {
   cancelled:    () => vibrate([40, 60, 40, 60, 200]),
 };
 
-// ─── Flash engine ──────────────────────────────────────────────────────────────
-const Flash = {
-  torchStream: null, torchTrack: null, flashOverlay: null,
-  async startTorch() {
-    try {
-      this.torchStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-      this.torchTrack  = this.torchStream.getVideoTracks()[0];
-      await this.torchTrack.applyConstraints({ advanced: [{ torch: true }] });
-    } catch (e) {}
-  },
-  async stopTorch() {
-    try {
-      if (this.torchTrack) {
-        await this.torchTrack.applyConstraints({ advanced: [{ torch: false }] });
-        this.torchStream.getTracks().forEach(t => t.stop());
-        this.torchTrack = null; this.torchStream = null;
-      }
-    } catch (e) {}
-  },
-  createOverlay() {
-    if (this.flashOverlay) return this.flashOverlay;
-    const el = document.createElement("div");
-    el.style.cssText = "position:fixed;inset:0;z-index:99999;background:white;pointer-events:none;opacity:0;";
-    document.body.appendChild(el);
-    this.flashOverlay = el;
-    return el;
-  },
-  removeOverlay() {
-    if (this.flashOverlay) {
-      this.flashOverlay.style.opacity = "0";
-      setTimeout(() => {
-        if (this.flashOverlay && document.body.contains(this.flashOverlay)) {
-          document.body.removeChild(this.flashOverlay);
-        }
-        this.flashOverlay = null;
-      }, 500);
-    }
-  },
-  async redAlert() {
-    const overlay = this.createOverlay();
-    const pattern = [600, 800, 600, 1200];
-    for (let i = 0; i < pattern.length; i++) {
-      overlay.style.opacity    = i % 2 === 0 ? "0.85" : "0";
-      overlay.style.transition = `opacity ${i % 2 === 0 ? "0.3s" : "0.5s"} ease`;
-      await this.torchStep(i % 2 === 0);
-      await new Promise(r => setTimeout(r, pattern[i]));
-    }
-    overlay.style.opacity = "0";
-    await this.stopTorch();
-  },
-  async torchStep(on) {
-    try { on ? await this.startTorch() : await this.stopTorch(); } catch (e) {}
-  },
-};
-
 // ─── Location helper ───────────────────────────────────────────────────────────
 const getLocation = () => new Promise((resolve) => {
   if (!navigator.geolocation) return resolve({ lat: null, lng: null });
@@ -227,7 +172,6 @@ const getLocation = () => new Promise((resolve) => {
 
 const BASE = {
   app: {
-    backgroundColor: "transparent",
     minHeight: "100vh",
     fontFamily: "'SF Pro Display','Helvetica Neue',system-ui,sans-serif",
     color: COLORS.slate,
@@ -263,43 +207,45 @@ function LocationPermissionPrompt({ onGranted }) {
   return (
     <div style={{
       position: "fixed", inset: 0, zIndex: 9000,
-      backgroundColor: "rgba(0,0,0,0.6)",
+      backgroundColor: "rgba(0,0,0,0.5)",
       backdropFilter: "blur(8px)",
       display: "flex", alignItems: "center", justifyContent: "center",
       padding: "0 32px",
       animation: "fadeIn 0.4s ease",
     }}>
       <div style={{
-        backgroundColor: "rgba(255,255,255,0.12)",
-        backdropFilter: "blur(20px)",
+        backgroundColor: "rgba(253,241,219,0.95)",
         borderRadius: 28,
         padding: "36px 28px",
-        border: "1px solid rgba(255,255,255,0.2)",
+        border: "1px solid rgba(211,131,92,0.2)",
         textAlign: "center",
-        boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
+        boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
       }}>
         <div style={{ fontSize: 44, marginBottom: 16 }}>📍</div>
         <div style={{
-          fontSize: 18, fontWeight: 700, color: COLORS.white,
+          fontSize: 18, fontWeight: 700, color: COLORS.slate,
           marginBottom: 12, letterSpacing: 0.3,
         }}>
           Allow Location Access
         </div>
         <div style={{
-          fontSize: 13, color: "rgba(255,255,255,0.75)",
-          lineHeight: 1.6, marginBottom: 28,
+          fontSize: 13, color: COLORS.slateLight,
+          lineHeight: 1.7, marginBottom: 28,
         }}>
-          When you press the SOS button, your location will be shared with your caregivers so they can find you quickly. Your location is never tracked or stored — it is only shared in the moment you need help.
+          When you press the SOS button, your location will be shared with your caregivers so they can find you quickly.
+          <br /><br />
+          Your location is never tracked or stored — it is only shared in the moment you need help.
         </div>
         <button
           onClick={onGranted}
           style={{
             width: "100%", padding: "14px 0",
-            backgroundColor: COLORS.celadon, color: COLORS.slate,
+            backgroundColor: COLORS.terracotta, color: COLORS.white,
             border: "none", borderRadius: 14,
             fontSize: 14, fontWeight: 700, cursor: "pointer",
             letterSpacing: 0.5,
-            boxShadow: "0 4px 20px rgba(168,195,179,0.4)",
+            boxShadow: "0 4px 20px rgba(211,131,92,0.3)",
+            marginBottom: 10,
           }}
         >
           Allow Location Access
@@ -307,8 +253,8 @@ function LocationPermissionPrompt({ onGranted }) {
         <button
           onClick={onGranted}
           style={{
-            width: "100%", padding: "12px 0", marginTop: 10,
-            backgroundColor: "transparent", color: "rgba(255,255,255,0.55)",
+            width: "100%", padding: "10px 0",
+            backgroundColor: "transparent", color: COLORS.slateLight,
             border: "none", fontSize: 12, cursor: "pointer",
           }}
         >
@@ -319,6 +265,7 @@ function LocationPermissionPrompt({ onGranted }) {
   );
 }
 
+// ─── Slide action ──────────────────────────────────────────────────────────────
 function SlideAction({ label, onComplete, color = COLORS.slate, pulseGreen = false }) {
   const trackRef = useRef(null);
   const [dragging, setDragging] = useState(false);
@@ -382,6 +329,7 @@ function SlideAction({ label, onComplete, color = COLORS.slate, pulseGreen = fal
   );
 }
 
+// ─── Hold button ───────────────────────────────────────────────────────────────
 function HoldButton({ onFired }) {
   const [holding,  setHolding]  = useState(false);
   const [progress, setProgress] = useState(0);
@@ -443,6 +391,7 @@ function HoldButton({ onFired }) {
   );
 }
 
+// ─── Sleep dial ────────────────────────────────────────────────────────────────
 function SleepDial({ startHour, endHour, onChange }) {
   const svgRef   = useRef(null);
   const dragging = useRef(null);
@@ -538,6 +487,7 @@ function SleepDial({ startHour, endHour, onChange }) {
   );
 }
 
+// ─── Toggle ────────────────────────────────────────────────────────────────────
 function Toggle({ value, onChange }) {
   return (
     <div onClick={() => onChange(!value)} style={{
@@ -556,6 +506,7 @@ function Toggle({ value, onChange }) {
   );
 }
 
+// ─── Alert banner ──────────────────────────────────────────────────────────────
 function AlertBanner({ tier, messages }) {
   const t = ALERT_TIERS[tier];
   if (tier === "stable" || !messages || messages.length === 0) return null;
@@ -578,6 +529,7 @@ function AlertBanner({ tier, messages }) {
   );
 }
 
+// ─── Status row ────────────────────────────────────────────────────────────────
 function StatusRow({ icon, label, value, tier }) {
   const color = tier === "red" ? "#FF8080" : tier === "orange" ? "#FFB347" : tier === "yellow" ? "#FFE566" : "rgba(255,255,255,0.9)";
   return (
@@ -591,13 +543,12 @@ function StatusRow({ icon, label, value, tier }) {
 
 // ─── Patient SOS screen ────────────────────────────────────────────────────────
 function PatientSOS({ onAlertFired }) {
-  const [time,           setTime]           = useState("");
-  const [alertActive,    setAlertActive]    = useState(false);
-  const [cancelled,      setCancelled]      = useState(false);
-  const [showLocPrompt,  setShowLocPrompt]  = useState(false);
-  const [locationReady,  setLocationReady]  = useState(false);
+  const [time,          setTime]          = useState("");
+  const [alertActive,   setAlertActive]   = useState(false);
+  const [cancelled,     setCancelled]     = useState(false);
+  const [showLocPrompt, setShowLocPrompt] = useState(false);
+  const [locationReady, setLocationReady] = useState(false);
 
-  // Clock
   useEffect(() => {
     const upd = () => setTime(
       new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", timeZone: "America/New_York" }) + " EST"
@@ -607,7 +558,6 @@ function PatientSOS({ onAlertFired }) {
     return () => clearInterval(t);
   }, []);
 
-  // Show location prompt on first open if not yet granted
   useEffect(() => {
     const granted = localStorage.getItem("watchaware_location_granted");
     if (!granted) {
@@ -619,7 +569,6 @@ function PatientSOS({ onAlertFired }) {
 
   const handleLocationGranted = () => {
     setShowLocPrompt(false);
-    // Trigger the actual browser permission request
     navigator.geolocation && navigator.geolocation.getCurrentPosition(
       () => {
         localStorage.setItem("watchaware_location_granted", "true");
@@ -638,8 +587,6 @@ function PatientSOS({ onAlertFired }) {
     setCancelled(false);
     const location = await getLocation();
     onAlertFired(location);
-
-    // Also fire the dedicated SOS alert function with location
     try {
       await fetch("/.netlify/functions/sos-alert", {
         method:  "POST",
@@ -662,37 +609,34 @@ function PatientSOS({ onAlertFired }) {
 
   return (
     <div style={{
-      ...BASE.app, justifyContent: "space-between", paddingBottom: 52, minHeight: "100vh",
-      backgroundImage: "url('/sos-bg.png')", backgroundSize: "cover", backgroundPosition: "center",
+      ...BASE.app,
+      backgroundColor: COLORS.oatmeal,
+      justifyContent: "space-between",
+      paddingBottom: 52,
+      minHeight: "100vh",
     }}>
-
-      {/* Location permission prompt */}
       {showLocPrompt && <LocationPermissionPrompt onGranted={handleLocationGranted} />}
 
-      <Logo subtitle={`Monitoring  ·  ${time}`} light />
+      <Logo subtitle={`Monitoring  ·  ${time}`} />
 
       <div style={{
         display: "flex", flexDirection: "column", alignItems: "center",
         gap: 20, flex: 1, justifyContent: "center",
       }}>
-
         <HoldButton onFired={handleFired} />
 
-        {/* Kind message beneath the button */}
-        <div style={{
-          textAlign: "center", padding: "0 32px",
-          animation: "fadeIn 1s ease 0.5s both",
-        }}>
+        {/* Kind message */}
+        <div style={{ textAlign: "center", padding: "0 32px", animation: "fadeIn 1s ease 0.5s both" }}>
           {!alertActive && !cancelled && (
             <>
               <div style={{
-                fontSize: 13, color: "rgba(255,255,255,0.85)",
+                fontSize: 13, color: COLORS.slate,
                 fontWeight: 500, lineHeight: 1.6, letterSpacing: 0.2,
               }}>
                 If you need help, hold this button for 3 seconds.
               </div>
               <div style={{
-                fontSize: 11, color: "rgba(255,255,255,0.55)",
+                fontSize: 11, color: COLORS.slateLight,
                 marginTop: 6, lineHeight: 1.5, letterSpacing: 0.3,
               }}>
                 Your caregivers will be notified immediately
@@ -702,7 +646,7 @@ function PatientSOS({ onAlertFired }) {
           )}
           {alertActive && !cancelled && (
             <div style={{
-              fontSize: 13, color: "rgba(255,255,255,0.9)",
+              fontSize: 13, color: COLORS.terracotta,
               fontWeight: 600, letterSpacing: 0.3,
               animation: "fadeIn 0.4s ease",
             }}>
@@ -724,7 +668,7 @@ function PatientSOS({ onAlertFired }) {
         <div style={{ width: "82%", display: "flex", flexDirection: "column", gap: 6, alignItems: "center" }}>
           {alertActive && !cancelled && (
             <div style={{
-              fontSize: 10, color: "rgba(255,255,255,0.65)",
+              fontSize: 10, color: COLORS.slateLight,
               letterSpacing: 1.5, textAlign: "center",
             }}>
               FALSE ALARM? SLIDE TO CANCEL
@@ -733,11 +677,10 @@ function PatientSOS({ onAlertFired }) {
           <SlideAction
             label={cancelled ? "ALL CLEAR" : alertActive ? "SLIDE TO CANCEL ALERT" : "SLIDE TO CANCEL"}
             onComplete={alertActive ? handleCancel : () => {}}
-            color={alertActive ? COLORS.celadon : "rgba(255,255,255,0.3)"}
+            color={alertActive ? COLORS.celadon : "rgba(168,195,179,0.4)"}
             pulseGreen={alertActive || cancelled}
           />
         </div>
-
       </div>
     </div>
   );
@@ -758,7 +701,7 @@ function CaretakerDashboard({ onSettings, alertTier, alertMessages, onAcknowledg
     if (repeatRef.current) { clearInterval(repeatRef.current); repeatRef.current = null; }
 
     if (alertTier === "stable" && prev !== "stable") {
-      Flash.removeOverlay(); Flash.stopTorch(); HAPTICS.stable(); AudioEngine.acknowledged(); return;
+      HAPTICS.stable(); AudioEngine.acknowledged(); return;
     }
     if (alertTier === "yellow") { HAPTICS.yellow(); AudioEngine.yellow(); }
     if (alertTier === "orange") {
@@ -766,8 +709,8 @@ function CaretakerDashboard({ onSettings, alertTier, alertMessages, onAcknowledg
       repeatRef.current = setInterval(() => { HAPTICS.orange(); AudioEngine.orange(); }, 12000);
     }
     if (alertTier === "red") {
-      HAPTICS.red(); AudioEngine.red(); Flash.redAlert();
-      repeatRef.current = setInterval(() => { HAPTICS.red(); AudioEngine.red(); Flash.redAlert(); }, 10000);
+      HAPTICS.red(); AudioEngine.red();
+      repeatRef.current = setInterval(() => { HAPTICS.red(); AudioEngine.red(); }, 10000);
     }
     return () => { if (repeatRef.current) clearInterval(repeatRef.current); };
   }, [alertTier]);
@@ -786,16 +729,20 @@ function CaretakerDashboard({ onSettings, alertTier, alertMessages, onAcknowledg
 
   return (
     <div style={{
-      ...BASE.app, justifyContent: "space-between", paddingBottom: 52, minHeight: "100vh",
-      backgroundImage: "url('/caretaker-bg.png')", backgroundSize: "cover", backgroundPosition: "center",
+      ...BASE.app,
+      backgroundColor: COLORS.oatmeal,
+      justifyContent: "space-between",
+      paddingBottom: 52,
+      minHeight: "100vh",
     }}>
       <div style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "0 24px" }}>
-        <Logo light />
+        <Logo />
         <button onClick={onSettings} style={{ background: "none", border: "none", cursor: "pointer", marginTop: 44, fontSize: 20 }}>⚙️</button>
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, justifyContent: "center", gap: 16 }}>
 
+        {/* Orb */}
         <div style={{ position: "relative", width: 280, height: 280 }}>
           <div style={{
             position: "absolute", top: 12, left: 12,
@@ -836,11 +783,12 @@ function CaretakerDashboard({ onSettings, alertTier, alertMessages, onAcknowledg
           </div>
         </div>
 
+        {/* Acknowledge slider directly below orb */}
         {(alertTier === "red" || alertTier === "orange") && (
           <div style={{ width: "82%", display: "flex", flexDirection: "column", gap: 6 }}>
             <div style={{
               fontSize: 10, letterSpacing: 1.5, textAlign: "center", fontWeight: 700,
-              color: alertTier === "red" ? "#FF8080" : "#FFB347",
+              color: alertTier === "red" ? "#D13C30" : "#E8821A",
             }}>
               {alertTier === "red" ? "🔴 EMERGENCY — SLIDE TO ACKNOWLEDGE" : "🟠 WARNING — SLIDE TO ACKNOWLEDGE"}
             </div>
@@ -854,6 +802,7 @@ function CaretakerDashboard({ onSettings, alertTier, alertMessages, onAcknowledg
 
         <AlertBanner tier={alertTier} messages={alertMessages} />
 
+        {/* Status rows */}
         <div style={{
           display: "flex", flexDirection: "column", gap: 12, width: "78%",
           backgroundColor: "rgba(0,0,0,0.25)", backdropFilter: "blur(10px)",
@@ -869,6 +818,7 @@ function CaretakerDashboard({ onSettings, alertTier, alertMessages, onAcknowledg
   );
 }
 
+// ─── Settings screen ───────────────────────────────────────────────────────────
 function SettingsScreen({ onBack, sleepStart, sleepEnd, onSleepChange }) {
   const [flatline,  setFlatline]  = useState(true);
   const [offline,   setOffline]   = useState(true);
@@ -970,6 +920,7 @@ function SettingsScreen({ onBack, sleepStart, sleepEnd, onSleepChange }) {
   );
 }
 
+// ─── Root ──────────────────────────────────────────────────────────────────────
 export default function WATCHaware() {
   const params = new URLSearchParams(window.location.search);
   const view   = params.get("view");
@@ -1003,8 +954,8 @@ export default function WATCHaware() {
   }, [view, screen]);
 
   const handleAcknowledge = () => {
-    Flash.removeOverlay(); Flash.stopTorch();
-    setAlertTier("stable"); setAlertMessages([]);
+    setAlertTier("stable");
+    setAlertMessages([]);
   };
 
   const tabs = [
@@ -1014,14 +965,14 @@ export default function WATCHaware() {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", width: "100%", overflowX: "hidden" }}>
+    <div style={{ minHeight: "100vh", width: "100%", overflowX: "hidden", backgroundColor: COLORS.oatmeal }}>
       <style>{STYLE_TAG}</style>
 
       {!locked && (
         <div style={{
           display: "flex", gap: 6, padding: "10px 16px",
           position: "fixed", top: 0, zIndex: 100, width: "100%",
-          backgroundColor: "rgba(237,232,220,0.92)", backdropFilter: "blur(10px)",
+          backgroundColor: "rgba(253,241,219,0.92)", backdropFilter: "blur(10px)",
           borderBottom: "1px solid rgba(0,0,0,0.05)", justifyContent: "center",
         }}>
           {tabs.map(({ id, label }) => (
@@ -1072,3 +1023,4 @@ export default function WATCHaware() {
     </div>
   );
 }
+
