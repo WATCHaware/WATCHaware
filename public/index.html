@@ -1,17 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="WATCHaware" />
-    <meta name="theme-color" content="#FDF1DB" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/icon-192.png" />
-    <title>WATCHaware</title>
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>WATCHaware</title>
+  <meta name="description" content="Passive health monitoring for the people you love." />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      font-family: 'SF Pro Display', 'Helvetica Neue', system-ui, sans-serif;
+      background-color: #EDE8DC;
+    }
+    .page {
+      min-height: 100vh;
+      background-image: url('/bg-index.png');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 60px 32px 52px;
+    }
+    .logo {
+      text-align: center;
+    }
+    .logo-mark {
+      font-size: 36px;
+      line-height: 1;
+      letter-spacing: 2px;
+      color: #4A4A4A;
+    }
+    .logo-mark span {
+      font-weight: 800;
+    }
+    .logo-mark em {
+      font-weight: 300;
+      font-style: italic;
+    }
+    .logo-sub {
+      font-size: 12px;
+      color: #8C8C8C;
+      letter-spacing: 2px;
+      margin-top: 6px;
+      text-transform: uppercase;
+    }
+    .middle {
+      text-align: center;
+      max-width: 320px;
+    }
+    .tagline {
+      font-size: 22px;
+      font-weight: 600;
+      color: #4A4A4A;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+    .description {
+      font-size: 14px;
+      color: #8C8C8C;
+      line-height: 1.7;
+    }
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 320px;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 16px 0;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-align: center;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s ease, transform 0.1s ease;
+    }
+    .btn:active {
+      opacity: 0.85;
+      transform: scale(0.98);
+    }
+    .btn-patient {
+      background-color: #D1835C;
+      color: #FFFFFF;
+      box-shadow: 0 4px 20px rgba(209,131,92,0.3);
+    }
+    .btn-care {
+      background-color: #A8C3B3;
+      color: #FFFFFF;
+      box-shadow: 0 4px 20px rgba(168,195,179,0.3);
+    }
+    .footer {
+      font-size: 10px;
+      color: #AAAAAA;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="logo">
+      <div class="logo-mark"><span>WATCH</span><em>aware</em></div>
+      <div class="logo-sub">Health Monitoring</div>
+    </div>
+
+    <div class="middle">
+      <div class="tagline">Always watching.<br />So you don't have to worry.</div>
+      <div class="description">
+        WATCHaware quietly monitors your loved one's Apple Watch health data and alerts their caregivers the moment something needs attention.
+      </div>
+    </div>
+
+    <div class="buttons">
+      <a href="/patient" class="btn btn-patient">I am the patient</a>
+      <a href="/care" class="btn btn-care">I am a caregiver</a>
+      <div class="footer">WATCHAWARE · PRIVATE &amp; SECURE</div>
+    </div>
+  </div>
+</body>
 </html>
