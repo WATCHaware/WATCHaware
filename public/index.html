@@ -7,11 +7,7 @@
   <meta name="description" content="Passive health monitoring for the people you love." />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      height: 100%;
-      font-family: 'SF Pro Display', 'Helvetica Neue', system-ui, sans-serif;
-      background-color: #EDE8DC;
-    }
+    html, body { height: 100%; font-family: 'SF Pro Display', 'Helvetica Neue', system-ui, sans-serif; }
     .page {
       min-height: 100vh;
       background-image: url('/bg-index.png');
@@ -21,86 +17,70 @@
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      padding: 60px 32px 52px;
+      padding: 52px 32px 48px;
     }
     .logo {
       text-align: center;
     }
     .logo-mark {
-      font-size: 36px;
+      font-size: 32px;
       line-height: 1;
       letter-spacing: 2px;
       color: #4A4A4A;
     }
-    .logo-mark span {
-      font-weight: 800;
-    }
-    .logo-mark em {
-      font-weight: 300;
-      font-style: italic;
-    }
+    .logo-mark span { font-weight: 800; }
+    .logo-mark em   { font-weight: 300; font-style: italic; }
     .logo-sub {
-      font-size: 12px;
+      font-size: 11px;
       color: #8C8C8C;
-      letter-spacing: 2px;
-      margin-top: 6px;
+      letter-spacing: 2.5px;
+      margin-top: 5px;
       text-transform: uppercase;
     }
-    .middle {
-      text-align: center;
-      max-width: 320px;
-    }
-    .tagline {
-      font-size: 22px;
-      font-weight: 600;
-      color: #4A4A4A;
-      line-height: 1.4;
-      margin-bottom: 12px;
-    }
-    .description {
-      font-size: 14px;
-      color: #8C8C8C;
-      line-height: 1.7;
-    }
+    .spacer { flex: 1; }
     .buttons {
       display: flex;
-      flex-direction: column;
-      gap: 12px;
+      flex-direction: row;
+      gap: 14px;
       width: 100%;
-      max-width: 320px;
+      max-width: 360px;
+      margin-bottom: 20px;
     }
     .btn {
+      flex: 1;
       display: block;
-      width: 100%;
-      padding: 16px 0;
-      border-radius: 16px;
-      font-size: 14px;
+      padding: 18px 0;
+      border-radius: 20px;
+      font-size: 13px;
       font-weight: 700;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
       text-align: center;
       text-decoration: none;
-      border: none;
       cursor: pointer;
       transition: opacity 0.2s ease, transform 0.1s ease;
+      /* Glass effect */
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.5);
     }
     .btn:active {
       opacity: 0.85;
-      transform: scale(0.98);
+      transform: scale(0.97);
     }
     .btn-patient {
-      background-color: #D1835C;
-      color: #FFFFFF;
-      box-shadow: 0 4px 20px rgba(209,131,92,0.3);
+      background: linear-gradient(135deg, rgba(209,131,92,0.55), rgba(209,131,92,0.35));
+      color: #4A4A4A;
+      box-shadow: 0 4px 24px rgba(209,131,92,0.2), inset 0 1px 0 rgba(255,255,255,0.4);
     }
     .btn-care {
-      background-color: #A8C3B3;
-      color: #FFFFFF;
-      box-shadow: 0 4px 20px rgba(168,195,179,0.3);
+      background: linear-gradient(135deg, rgba(168,195,179,0.55), rgba(168,195,179,0.35));
+      color: #4A4A4A;
+      box-shadow: 0 4px 24px rgba(168,195,179,0.2), inset 0 1px 0 rgba(255,255,255,0.4);
     }
     .footer {
       font-size: 10px;
       color: #AAAAAA;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
       text-align: center;
     }
   </style>
@@ -112,18 +92,13 @@
       <div class="logo-sub">Health Monitoring</div>
     </div>
 
-    <div class="middle">
-      <div class="tagline">Always watching.<br />So you don't have to worry.</div>
-      <div class="description">
-        WATCHaware quietly monitors your loved one's Apple Watch health data and alerts their caregivers the moment something needs attention.
-      </div>
-    </div>
+    <div class="spacer"></div>
 
     <div class="buttons">
-      <a href="/patient" class="btn btn-patient">I am the patient</a>
-      <a href="/care" class="btn btn-care">I am a caregiver</a>
-      <div class="footer">WATCHAWARE · PRIVATE &amp; SECURE</div>
+      <a href="/patient" class="btn btn-patient">I am the<br/>patient</a>
+      <a href="/care" class="btn btn-care">I am a<br/>caregiver</a>
     </div>
+    <div class="footer">WATCHAWARE · PRIVATE &amp; SECURE</div>
   </div>
 </body>
 </html>
