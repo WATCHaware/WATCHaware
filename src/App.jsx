@@ -633,6 +633,7 @@ function HoldButton({ onFired, light }) {
           position: "relative",
           overflow: "hidden",
           userSelect: "none",
+          margin-top: -20
         }}
       >
         <span
@@ -1211,7 +1212,7 @@ ${locationReady ? "Your caregivers will be notified with your location." : "Your
                 flexDirection: "column",
                 gap: 10,
                 width: "86%",
-                marginTop: "90px",
+                marginTop: "300px",
                 backgroundColor: light ? "rgba(0,0,0,0.25)" : "rgba(255,255,255,0.75)",
                 backdropFilter: "blur(10px)",
                 borderRadius: 20,
