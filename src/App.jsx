@@ -11,67 +11,52 @@ const COLORS = {
 
 const ALERT_TIERS = {
   stable: {
-    orb:        "radial-gradient(circle at 38% 32%, #C2D9CF, #A8C3B3 60%, #8AADA0)",
     glow:       "rgba(168,195,179,0.25)",
     label:      "STABLE",
     sublabel:   "All vitals normal. Monitoring active.",
     labelColor: "rgba(255,255,255,0.9)",
     accent:     "#A8C3B3",
     emoji:      "",
-    shadowBase: "rgba(168,195,179,0.25)",
-    shadowPeak: "rgba(168,195,179,0.5)",
     bg:         "bg-default.png",
     textLight:  false,
   },
   yellow: {
-    orb:        "radial-gradient(circle at 38% 32%, #FFE566, #E6C840 60%, #C9A800)",
     glow:       "rgba(230,200,64,0.35)",
     label:      "WARNING",
     sublabel:   "A vital sign needs attention.",
     labelColor: "rgba(255,255,255,0.95)",
     accent:     "#E6C840",
     emoji:      "🟡",
-    shadowBase: "rgba(230,200,64,0.3)",
-    shadowPeak: "rgba(230,200,64,0.6)",
     bg:         "bg-yellow.png",
     textLight:  false,
   },
   orange: {
-    orb:        "radial-gradient(circle at 38% 32%, #FFB347, #E8821A 60%, #C96500)",
     glow:       "rgba(232,130,26,0.4)",
     label:      "CAUTION",
     sublabel:   "Multiple signals require attention.",
     labelColor: "rgba(255,255,255,0.95)",
     accent:     "#E8821A",
     emoji:      "🟠",
-    shadowBase: "rgba(232,130,26,0.35)",
-    shadowPeak: "rgba(232,130,26,0.65)",
     bg:         "bg-orange.png",
     textLight:  false,
   },
   red: {
-    orb:        "radial-gradient(circle at 38% 32%, #FF6B6B, #D1835C 60%, #B03020)",
     glow:       "rgba(211,60,48,0.45)",
     label:      "CRITICAL",
     sublabel:   "Emergency condition detected.",
     labelColor: "rgba(255,255,255,1)",
     accent:     "#D13C30",
     emoji:      "🔴",
-    shadowBase: "rgba(211,60,48,0.4)",
-    shadowPeak: "rgba(211,60,48,0.8)",
     bg:         "bg-red.png",
     textLight:  true,
   },
   sos: {
-    orb:        "radial-gradient(circle at 38% 32%, #FF6B6B, #D1835C 60%, #B03020)",
     glow:       "rgba(211,60,48,0.45)",
     label:      "SOS",
     sublabel:   "Patient has triggered emergency alert.",
     labelColor: "rgba(255,255,255,1)",
     accent:     "#D13C30",
     emoji:      "🆘",
-    shadowBase: "rgba(211,60,48,0.4)",
-    shadowPeak: "rgba(211,60,48,0.8)",
     bg:         "bg-alt.png",
     textLight:  true,
   },
@@ -93,27 +78,6 @@ const getTimePalette = h => {
   if (h >= 17 && h < 20) return TIME_PALETTES.evening;
   if (h >= 20 && h < 22) return TIME_PALETTES.dusk;
   return TIME_PALETTES.night;
-};
-
-const bpmToDuration = (bpm) => {
-  if (!bpm || bpm <= 0) return 4000;
-  const ms = (60 / bpm) * 1000;
-  return Math.round(Math.min(Math.max(ms * 2, 600), 5000));
-};
-
-const injectBreathAnimation = (tierKey, shadowBase, shadowPeak, duration) => {
-  const name = `breathe_${tierKey}_${duration}`;
-  if (document.getElementById(`anim_${name}`)) return name;
-  const style = document.createElement("style");
-  style.id = `anim_${name}`;
-  style.textContent = `
-    @keyframes ${name} {
-      0%,100% { box-shadow: 0 0 40px ${shadowBase}, 0 12px 30px ${shadowBase}; }
-      50%      { box-shadow: 0 0 80px ${shadowPeak}, 0 12px 45px ${shadowPeak}; }
-    }
-  `;
-  document.head.appendChild(style);
-  return name;
 };
 
 const STYLE_TAG = `
@@ -215,62 +179,6 @@ function AppBackground({ tier, sosFired, children }) {
   );
 }
 
-// ─── Orb ───────────────────────────────────────────────────────────────────────
-function Orb({ alertTier, sosFired, patientBpm, size = 280 }) {
-  const tierKey  = sosFired ? "sos" : alertTier;
-  const tier     = ALERT_TIERS[tierKey] || ALERT_TIERS.stable;
-  const duration = bpmToDuration(patientBpm);
-  const animName = injectBreathAnimation(tierKey, tier.shadowBase, tier.shadowPeak, duration);
-
-  return (
-    <div style={{ position: "relative", width: size, height: size }}>
-      <div style={{
-        position: "absolute", top: 12, left: 12,
-        width: size, height: size, borderRadius: "50%",
-        backgroundColor: tier.glow, filter: "blur(24px)",
-        transition: "background-color 0.8s ease", zIndex: 0,
-      }} />
-      <div style={{
-        position: "relative", width: size, height: size, borderRadius: "50%",
-        background: tier.orb,
-        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-        animation: `${animName} ${duration}ms ease-in-out infinite`,
-        transition: "background 0.8s ease", zIndex: 1,
-        boxShadow: "inset 0 -8px 20px rgba(0,0,0,0.12), inset 0 2px 6px rgba(255,255,255,0.25)",
-      }}>
-        <div style={{
-          position: "absolute", top: 18, left: Math.round(size * 0.11),
-          width: Math.round(size * 0.32), height: Math.round(size * 0.16),
-          borderRadius: "50%", background: "rgba(255,255,255,0.22)",
-          filter: "blur(6px)", transform: "rotate(-20deg)", pointerEvents: "none",
-        }} />
-        <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1.5px solid rgba(255,255,255,0.18)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", width: "55%", height: 1, backgroundColor: "rgba(255,255,255,0.3)", top: "46%" }} />
-        <div style={{ fontSize: Math.round(size * 0.057), marginBottom: Math.round(size * 0.04), lineHeight: 1 }}>
-          <span style={{ fontWeight: 800, color: COLORS.slate, letterSpacing: 1 }}>WATCH</span>
-          <span style={{ fontWeight: 300, color: COLORS.slate, fontStyle: "italic" }}>aware</span>
-        </div>
-        {patientBpm > 0 && (
-          <div style={{
-            fontSize: Math.round(size * 0.079), fontWeight: 700, color: COLORS.white,
-            textShadow: "0 2px 8px rgba(0,0,0,0.3)", letterSpacing: 1,
-            marginBottom: Math.round(size * 0.02),
-          }}>
-            {patientBpm}
-            <span style={{ fontSize: Math.round(size * 0.036), fontWeight: 400, letterSpacing: 2, marginLeft: 4, opacity: 0.8 }}>BPM</span>
-          </div>
-        )}
-        <div style={{
-          fontSize: Math.round(size * 0.04), fontWeight: 700, letterSpacing: 3,
-          color: tier.labelColor, textShadow: "0 1px 4px rgba(0,0,0,0.2)",
-        }}>
-          {tier.emoji ? `${tier.emoji} ${tier.label}` : tier.label}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ─── State label ───────────────────────────────────────────────────────────────
 function StateLabel({ alertTier, sosFired, isActive, isCancelled }) {
   const tierKey = sosFired ? "sos" : alertTier;
@@ -290,10 +198,10 @@ function StateLabel({ alertTier, sosFired, isActive, isCancelled }) {
   if (sosFired && isActive) {
     return (
       <div style={{ textAlign: "center", padding: "0 32px", animation: "fadeIn 0.4s ease" }}>
-        <div style={{ fontSize: 15, color: light ? COLORS.white : COLORS.terracotta, fontWeight: 700, letterSpacing: 0.5 }}>
+        <div style={{ fontSize: 18, color: light ? COLORS.white : COLORS.terracotta, fontWeight: 700, letterSpacing: 0.5 }}>
           Help is on the way.
         </div>
-        <div style={{ fontSize: 12, color: light ? "rgba(255,255,255,0.75)" : COLORS.slateLight, marginTop: 6, lineHeight: 1.5 }}>
+        <div style={{ fontSize: 14, color: light ? "rgba(255,255,255,0.75)" : COLORS.slateLight, marginTop: 6, lineHeight: 1.5 }}>
           You are not alone.
         </div>
       </div>
@@ -302,10 +210,10 @@ function StateLabel({ alertTier, sosFired, isActive, isCancelled }) {
 
   return (
     <div style={{ textAlign: "center", padding: "0 32px", animation: "fadeIn 1s ease 0.3s both" }}>
-      <div style={{ fontSize: 15, fontWeight: 700, letterSpacing: 1.5, color: light ? COLORS.white : COLORS.slate, marginBottom: 6 }}>
+      <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: 1.5, color: light ? COLORS.white : COLORS.slate, marginBottom: 6 }}>
         {tier.label}
       </div>
-      <div style={{ fontSize: 12, lineHeight: 1.6, color: light ? "rgba(255,255,255,0.75)" : COLORS.slateLight }}>
+      <div style={{ fontSize: 14, lineHeight: 1.6, color: light ? "rgba(255,255,255,0.75)" : COLORS.slateLight }}>
         {tier.sublabel}
       </div>
     </div>
@@ -321,7 +229,7 @@ function Logo({ subtitle, light }) {
         <span style={{ fontWeight: 300, fontStyle: "italic", color: light ? "rgba(255,255,255,0.9)" : COLORS.slate }}>aware</span>
       </div>
       {subtitle && (
-        <div style={{ fontSize: 11, color: light ? "rgba(255,255,255,0.6)" : COLORS.slateLight, marginTop: 4, letterSpacing: 0.5 }}>
+        <div style={{ fontSize: 12, color: light ? "rgba(255,255,255,0.6)" : COLORS.slateLight, marginTop: 4, letterSpacing: 0.5 }}>
           {subtitle}
         </div>
       )}
@@ -460,7 +368,7 @@ function HoldButton({ onFired, light }) {
   const R = 140, C = 2 * Math.PI * R;
 
   return (
-    <div style={{ position: "relative", width: 300, height: 300, display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div style={{ position: "relative", width: 300, height: 300, display: "flex", alignItems: "center", justifyContent: "center", margin: "10px 0" }}>
       <svg width={300} height={300} style={{ position: "absolute", top: 0, left: 0, transform: "rotate(-90deg)" }}>
         <circle cx={150} cy={150} r={R} fill="none" stroke={light ? "rgba(255,255,255,0.2)" : "rgba(211,131,92,0.2)"} strokeWidth={6} />
         {holding && (
@@ -736,31 +644,27 @@ function AppScreen({ view, alertTier, alertMessages, vitals, sosFired, setSosFir
           )}
         </div>
 
-        {/* Main content */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, justifyContent: "center", gap: 16, width: "100%" }}>
-
-          {isPatient ? (
-            <>
-              <Orb alertTier={alertTier} sosFired={sosFired} patientBpm={vitals.bpm} size={180} />
-              <HoldButton onFired={handleSOSFired} light={light} />
-            </>
-          ) : (
-            <Orb alertTier={alertTier} sosFired={sosFired} patientBpm={vitals.bpm} size={280} />
-          )}
+        {/* Main content - Gap adjusted to space items perfectly without the Orb */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, justifyContent: "center", gap: 28, width: "100%", padding: "20px 0" }}>
 
           <StateLabel alertTier={alertTier} sosFired={sosFired} isActive={sosFired} isCancelled={cancelled} />
 
+          {/* Patient SOS Button */}
+          {isPatient && (
+            <HoldButton onFired={handleSOSFired} light={light} />
+          )}
+
           {/* Patient hint + cancel slider */}
           {isPatient && (
-            <div style={{ width: "82%", display: "flex", flexDirection: "column", gap: 6, alignItems: "center" }}>
+            <div style={{ width: "82%", display: "flex", flexDirection: "column", gap: 10, alignItems: "center" }}>
               {!sosFired && !cancelled && (
-                <div style={{ fontSize: 11, color: light ? "rgba(255,255,255,0.6)" : COLORS.slateLight, textAlign: "center", lineHeight: 1.6 }}>
+                <div style={{ fontSize: 13, color: light ? "rgba(255,255,255,0.8)" : COLORS.slate, textAlign: "center", lineHeight: 1.6 }}>
                   If you need help, hold this button for 3 seconds.{"\n"}
                   {locationReady ? "Your caregivers will be notified with your location." : "Your caregivers will be notified immediately."}
                 </div>
               )}
               {sosFired && !cancelled && (
-                <div style={{ fontSize: 10, color: light ? "rgba(255,255,255,0.6)" : COLORS.slateLight, letterSpacing: 1.5, textAlign: "center" }}>
+                <div style={{ fontSize: 11, color: light ? "rgba(255,255,255,0.6)" : COLORS.slateLight, letterSpacing: 1.5, textAlign: "center" }}>
                   FALSE ALARM? SLIDE TO CANCEL
                 </div>
               )}
@@ -800,14 +704,14 @@ function AppScreen({ view, alertTier, alertMessages, vitals, sosFired, setSosFir
               display: "flex", flexDirection: "column", gap: 10, width: "86%",
               backgroundColor: light ? "rgba(0,0,0,0.25)" : "rgba(255,255,255,0.75)",
               backdropFilter: "blur(10px)",
-              borderRadius: 20, padding: "16px 20px",
+              borderRadius: 20, padding: "20px",
               boxShadow: "0 8px 30px rgba(0,0,0,0.08)",
               border: `1px solid ${light ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.05)"}`,
             }}>
               <StatusRow light={light} icon="❤️"  label="Heart Rate"         value={vitals.bpm        ? `${vitals.bpm} BPM`         : na} tier={vitals.bpm > 150 || vitals.bpm < 40 ? "red" : vitals.bpm > 120 || vitals.bpm < 50 ? "orange" : vitals.bpm > 100 || vitals.bpm < 55 ? "yellow" : "stable"} />
               <StatusRow light={light} icon="🫁"  label="Blood Oxygen"       value={vitals.spo2       ? `${vitals.spo2}%`            : na} tier={vitals.spo2 < 90 ? "red" : vitals.spo2 < 93 ? "orange" : vitals.spo2 < 95 ? "yellow" : "stable"} />
               <StatusRow light={light} icon="💨"  label="Respiratory Rate"   value={vitals.rr         ? `${vitals.rr} /min`          : na} tier={vitals.rr > 30 || vitals.rr < 6 ? "red" : vitals.rr > 25 || vitals.rr < 8 ? "orange" : "stable"} />
-              <StatusRow light={light} icon="🌡️" label="Temperature"         value={vitals.temp       ? `${vitals.temp}°C`           : na} tier={vitals.temp > 39.4 ? "red" : vitals.temp > 38.5 ? "orange" : vitals.temp > 37.8 ? "yellow" : "stable"} />
+              <StatusRow light={light} icon="🌡️" label="Temperature"        value={vitals.temp       ? `${vitals.temp}°C`           : na} tier={vitals.temp > 39.4 ? "red" : vitals.temp > 38.5 ? "orange" : vitals.temp > 37.8 ? "yellow" : "stable"} />
               <StatusRow light={light} icon="📊"  label="HRV"                value={vitals.hrv        ? `${vitals.hrv}ms`            : na} tier={vitals.hrv < 20 ? "red" : vitals.hrv < 30 ? "orange" : "stable"} />
               <StatusRow light={light} icon="🚶"  label="Walking Steadiness" value={vitals.walkingSteadiness || na}                       tier={vitals.walkingSteadiness === "Very Low" ? "orange" : vitals.walkingSteadiness === "Low" ? "yellow" : "stable"} />
               <StatusRow light={light} icon="😴"  label="Sleep"              value={vitals.sleepHours !== null ? `${vitals.sleepHours}h` : na} tier={vitals.sleepHours < 2 ? "orange" : vitals.sleepHours < 4 ? "yellow" : "stable"} />
@@ -1036,4 +940,3 @@ export default function WATCHaware() {
     </div>
   );
 }
-
