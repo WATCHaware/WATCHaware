@@ -881,7 +881,6 @@ export default function WATCHaware() {
     else if (alertTier === "orange") setAlertTier("red");
     else if (alertTier === "red") setSosFired(true);
   };
-  ];
 
   return (
     <div style={{ minHeight: "100vh", width: "100%", overflowX: "hidden" }}>
