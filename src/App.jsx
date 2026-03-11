@@ -100,7 +100,7 @@ const STYLE_TAG = `
 * { box-sizing: border-box; margin: 0; padding: 0; }
 `;
 
-// ─── Audio engine ──────────────────────────────────────────────────────────────
+// --- Audio engine ---
 const AudioEngine = {
   ctx: null,
   getCtx() {
@@ -137,20 +137,20 @@ const AudioEngine = {
   },
 };
 
-// ─── Haptics ───────────────────────────────────────────────────────────────────
+// --- Haptics ---
 const vibrate = p => { if (navigator.vibrate) navigator.vibrate(p); };
 const HAPTICS = {
   stable:       () => vibrate(40),
   yellow:       () => vibrate([60, 80, 60]),
   orange:       () => vibrate([100, 60, 100, 60, 100]),
-  red:          () => vibrate([200, 80, 100, 80, 200]),
+  red:           () => vibrate([200, 80, 100, 80, 200]),
   sosHolding:   (p) => { if (p > 75) vibrate(80); else if (p > 50) vibrate(50); else if (p > 25) vibrate(30); },
   sosFired:     () => vibrate([300, 80, 300]),
   acknowledged: () => vibrate([60, 30, 60, 30, 120]),
-  cancelled:    () => vibrate([40, 60, 40, 60, 200]),
+  cancelled:     () => vibrate([40, 60, 40, 60, 200]),
 };
 
-// ─── Location helper ───────────────────────────────────────────────────────────
+// --- Location helper ---
 const getLocation = () => new Promise((resolve) => {
   if (!navigator.geolocation) return resolve({ lat: null, lng: null });
   navigator.geolocation.getCurrentPosition(
@@ -160,7 +160,7 @@ const getLocation = () => new Promise((resolve) => {
   );
 });
 
-// ─── Background ────────────────────────────────────────────────────────────────
+// --- Background ---
 function AppBackground({ tier, sosFired, children }) {
   const t      = sosFired ? ALERT_TIERS.sos : (ALERT_TIERS[tier] || ALERT_TIERS.stable);
   const bgFile = t.bg;
@@ -179,7 +179,7 @@ function AppBackground({ tier, sosFired, children }) {
   );
 }
 
-// ─── State label ───────────────────────────────────────────────────────────────
+// --- State label ---
 function StateLabel({ alertTier, sosFired, isActive, isCancelled }) {
   const tierKey = sosFired ? "sos" : alertTier;
   const tier    = ALERT_TIERS[tierKey] || ALERT_TIERS.stable;
@@ -220,7 +220,7 @@ function StateLabel({ alertTier, sosFired, isActive, isCancelled }) {
   );
 }
 
-// ─── Logo ──────────────────────────────────────────────────────────────────────
+// --- Logo ---
 function Logo({ subtitle, light, onClick }) {
   return (
     <div onClick={onClick} style={{ textAlign: "center", paddingTop: 52, paddingBottom: 4, cursor: "pointer" }}>
@@ -237,7 +237,7 @@ function Logo({ subtitle, light, onClick }) {
   );
 }
 
-// ─── Location permission prompt ────────────────────────────────────────────────
+// --- Location permission prompt ---
 function LocationPermissionPrompt({ onGranted }) {
   return (
     <div style={{
@@ -279,7 +279,7 @@ function LocationPermissionPrompt({ onGranted }) {
   );
 }
 
-// ─── Slide action ──────────────────────────────────────────────────────────────
+// --- Slide action ---
 function SlideAction({ label, onComplete, color = COLORS.slate, pulseGreen = false, light = false }) {
   const trackRef = useRef(null);
   const [dragging, setDragging] = useState(false);
@@ -343,8 +343,7 @@ function SlideAction({ label, onComplete, color = COLORS.slate, pulseGreen = fal
   );
 }
 
-// ─── Hold button ───────────────────────────────────────────────────────────────
-// ─── Hold button ───────────────────────────────────────────────────────────────
+// --- Hold button ---
 function HoldButton({ onFired, light }) {
   const [holding,  setHolding]  = useState(false);
   const [progress, setProgress] = useState(0);
@@ -370,18 +369,11 @@ function HoldButton({ onFired, light }) {
 
   return (
     <div style={{ 
-      position: "relative", 
-      width: 300, 
-      height: 300, 
-      display: "flex", 
-      alignItems: "center", 
-      justifyContent: "center", 
-      // 👇 ADJUST THIS NUMBER TO PERFECTLY CENTER IT OVER YOUR LOTUS
-      marginTop: 65, 
-      marginBottom: 10 
+      position: "relative", width: 300, height: 300, 
+      display: "flex", alignItems: "center", justifyContent: "center", 
+      marginTop: 65, marginBottom: 10 
     }}>
       <svg width={300} height={300} style={{ position: "absolute", top: 0, left: 0, transform: "rotate(-90deg)", pointerEvents: "none" }}>
-        {/* 👇 THIS KEEPS YOUR OUTER EDGE VISIBLE */}
         <circle cx={150} cy={150} r={R} fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth={4} />
         {holding && (
           <circle cx={150} cy={150} r={R} fill="none"
@@ -395,22 +387,16 @@ function HoldButton({ onFired, light }) {
         onTouchEnd={end}
         style={{
           width: 258, height: 258, borderRadius: "50%",
-          // 👇 MAKES THE INNER CIRCLE COMPLETELY TRANSPARENT
           background: "transparent",
           display: "flex", alignItems: "center", justifyContent: "center",
-          cursor: "pointer",
-          transform: holding ? "scale(0.96)" : "scale(1)",
-          transition: "transform 0.1s ease",
-          touchAction: "none", position: "relative", overflow: "hidden",
-          userSelect: "none",
+          cursor: "pointer", transform: holding ? "scale(0.96)" : "scale(1)",
+          transition: "transform 0.1s ease", touchAction: "none", position: "relative",
+          overflow: "hidden", userSelect: "none",
         }}
       >
         <span style={{
-          fontSize: 50, fontWeight: 700, 
-          color: COLORS.white, 
-          letterSpacing: 3,
-          position: "relative", userSelect: "none", WebkitUserSelect: "none", pointerEvents: "none",
-          // 👇 SUBTLE SHADOW SO IT POPS AGAINST THE BACKGROUND
+          fontSize: 50, fontWeight: 700, color: COLORS.white, letterSpacing: 3,
+          position: "relative", userSelect: "none", pointerEvents: "none",
           textShadow: "0 2px 10px rgba(0,0,0,0.25)"
         }}>SOS</span>
       </div>
@@ -418,15 +404,17 @@ function HoldButton({ onFired, light }) {
   );
 }
 
-// ─── Sleep dial ────────────────────────────────────────────────────────────────
+// --- Sleep dial ---
 function SleepDial({ startHour, endHour, onChange }) {
   const svgRef   = useRef(null);
   const dragging = useRef(null);
   const [currentHour, setCurrentHour] = useState(new Date().getHours());
+  
   useEffect(() => {
     const t = setInterval(() => setCurrentHour(new Date().getHours()), 60000);
     return () => clearInterval(t);
   }, []);
+
   const palette   = getTimePalette(currentHour);
   const isNight   = currentHour >= 22 || currentHour < 5;
   const textColor = isNight ? "rgba(255,255,255,0.85)" : COLORS.slate;
@@ -435,20 +423,24 @@ function SleepDial({ startHour, endHour, onChange }) {
   const hourToAngle = h => ((h / 24) * 360 - 90 + 360) % 360;
   const angleToHour = a => Math.round(((a + 90 + 360) % 360) / 15) % 24;
   const polarToXY   = (deg, r) => ({ x: CX + r * Math.cos((deg * Math.PI) / 180), y: CY + r * Math.sin((deg * Math.PI) / 180) });
+  
   const describeArc = (a1, a2) => {
     const s = polarToXY(a1, R), e = polarToXY(a2, R);
     const large = ((a2 - a1 + 360) % 360) > 180 ? 1 : 0;
     return `M ${s.x} ${s.y} A ${R} ${R} 0 ${large} 1 ${e.x} ${e.y}`;
   };
+
   const getAngle = ev => {
     const rect = svgRef.current.getBoundingClientRect();
     const cx = ev.touches ? ev.touches[0].clientX : ev.clientX;
     const cy = ev.touches ? ev.touches[0].clientY : ev.clientY;
     return (Math.atan2(cy - rect.top - CY, cx - rect.left - CX) * 180) / Math.PI;
   };
+
   const startA = hourToAngle(startHour), endA = hourToAngle(endHour);
   const sunPos = polarToXY(startA, R), moonPos = polarToXY(endA, R);
   const fmt = h => `${h % 12 === 0 ? 12 : h % 12}:00 ${h >= 12 ? "PM" : "AM"}`;
+
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, padding: "16px 0" }}>
       <svg ref={svgRef} width={SIZE} height={SIZE}
@@ -489,7 +481,7 @@ function SleepDial({ startHour, endHour, onChange }) {
   );
 }
 
-// ─── Toggle ────────────────────────────────────────────────────────────────────
+// --- Toggle ---
 function Toggle({ value, onChange }) {
   return (
     <div onClick={() => onChange(!value)} style={{
@@ -506,17 +498,15 @@ function Toggle({ value, onChange }) {
   );
 }
 
-// ─── Alert banner ──────────────────────────────────────────────────────────────
+// --- Alert banner ---
 function AlertBanner({ tier, sosFired, messages, light }) {
   const tierKey = sosFired ? "sos" : tier;
   const t = ALERT_TIERS[tierKey];
   if (tierKey === "stable" || !messages || messages.length === 0) return null;
   return (
     <div style={{
-      width: "88%",
-      backgroundColor: light ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.7)",
-      backdropFilter: "blur(12px)",
-      borderRadius: 16, padding: "14px 18px",
+      width: "88%", backgroundColor: light ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.7)",
+      backdropFilter: "blur(12px)", borderRadius: 16, padding: "14px 18px",
       border: `1.5px solid ${t.accent}66`, marginBottom: 8,
     }}>
       {messages.map((msg, i) => (
@@ -533,9 +523,9 @@ function AlertBanner({ tier, sosFired, messages, light }) {
   );
 }
 
-// ─── Status row ────────────────────────────────────────────────────────────────
+// --- Status row ---
 function StatusRow({ icon, label, value, tier, light }) {
-  const color = tier === "red"    ? (light ? "#FF8080" : "#C0392B")
+  const color = tier === "red"     ? (light ? "#FF8080" : "#C0392B")
               : tier === "orange" ? (light ? "#FFB347" : "#E67E22")
               : tier === "yellow" ? (light ? "#FFE566" : "#D4AC0D")
               : light ? "rgba(255,255,255,0.9)" : COLORS.slate;
@@ -548,7 +538,7 @@ function StatusRow({ icon, label, value, tier, light }) {
   );
 }
 
-// ─── Shared app screen ─────────────────────────────────────────────────────────
+// --- Shared app screen ---
 function AppScreen({ view, alertTier, alertMessages, vitals, sosFired, setSosFired, onAcknowledge, onSettings, onCycleTier }) {
   const isPatient   = view === "patient";
   const isCaretaker = view === "caretaker";
@@ -556,8 +546,8 @@ function AppScreen({ view, alertTier, alertMessages, vitals, sosFired, setSosFir
   const tier        = ALERT_TIERS[tierKey] || ALERT_TIERS.stable;
   const light       = tier.textLight;
 
-  const [time,          setTime]          = useState("");
-  const [cancelled,     setCancelled]     = useState(false);
+  const [time, setTime] = useState("");
+  const [cancelled, setCancelled] = useState(false);
   const [showLocPrompt, setShowLocPrompt] = useState(false);
   const [locationReady, setLocationReady] = useState(false);
   const repeatRef   = useRef(null);
@@ -599,11 +589,13 @@ function AppScreen({ view, alertTier, alertMessages, vitals, sosFired, setSosFir
 
   const handleLocationGranted = () => {
     setShowLocPrompt(false);
-    navigator.geolocation && navigator.geolocation.getCurrentPosition(
-      () => { localStorage.setItem("watchaware_location_granted", "true"); setLocationReady(true); },
-      () => { localStorage.setItem("watchaware_location_granted", "skipped"); setLocationReady(true); },
-      { timeout: 8000 }
-    );
+    if (navigator.geolocation) {
+       navigator.geolocation.getCurrentPosition(
+        () => { localStorage.setItem("watchaware_location_granted", "true"); setLocationReady(true); },
+        () => { localStorage.setItem("watchaware_location_granted", "skipped"); setLocationReady(true); },
+        { timeout: 8000 }
+      );
+    }
   };
 
   const handleSOSFired = async () => {
@@ -637,8 +629,7 @@ function AppScreen({ view, alertTier, alertMessages, vitals, sosFired, setSosFir
       {showLocPrompt && <LocationPermissionPrompt onGranted={handleLocationGranted} />}
 
       <div style={{
-        minHeight: "100vh",
-        display: "flex", flexDirection: "column", alignItems: "center",
+        minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center",
         maxWidth: 430, margin: "0 auto", paddingBottom: 52,
         fontFamily: "'SF Pro Display','Helvetica Neue',system-ui,sans-serif",
       }}>
@@ -647,24 +638,21 @@ function AppScreen({ view, alertTier, alertMessages, vitals, sosFired, setSosFir
           <Logo 
             subtitle={`${isPatient ? "Patient" : "Caregiver"}  ·  ${time}`} 
             light={light} 
-            onClick={onCycleTier} // 👈 ADD THIS LINE
+            onClick={onCycleTier} 
           />
           {isCaretaker && (
             <button onClick={onSettings} style={{ background: "none", border: "none", cursor: "pointer", marginTop: 52, fontSize: 20, opacity: 0.7 }}>⚙️</button>
           )}
         </div>
 
-        {/* Main content - Gap adjusted to space items perfectly without the Orb */}
+        {/* Main content */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, justifyContent: "center", gap: 28, width: "100%", padding: "20px 0" }}>
-
           <StateLabel alertTier={alertTier} sosFired={sosFired} isActive={sosFired} isCancelled={cancelled} />
 
-          {/* Patient SOS Button */}
           {isPatient && (
             <HoldButton onFired={handleSOSFired} light={light} />
           )}
 
-          {/* Patient hint + cancel slider */}
           {isPatient && (
             <div style={{ width: "82%", display: "flex", flexDirection: "column", gap: 10, alignItems: "center" }}>
               {!sosFired && !cancelled && (
@@ -688,7 +676,6 @@ function AppScreen({ view, alertTier, alertMessages, vitals, sosFired, setSosFir
             </div>
           )}
 
-          {/* Caretaker acknowledge slider */}
           {isCaretaker && (alertTier === "red" || alertTier === "orange" || sosFired) && (
             <div style={{ width: "82%", display: "flex", flexDirection: "column", gap: 6 }}>
               <div style={{
@@ -708,27 +695,25 @@ function AppScreen({ view, alertTier, alertMessages, vitals, sosFired, setSosFir
 
           <AlertBanner tier={alertTier} sosFired={sosFired} messages={alertMessages} light={light} />
 
-          {/* Caretaker vitals panel */}
           {isCaretaker && (
             <div style={{
               display: "flex", flexDirection: "column", gap: 10, width: "86%",
               backgroundColor: light ? "rgba(0,0,0,0.25)" : "rgba(255,255,255,0.75)",
-              backdropFilter: "blur(10px)",
-              borderRadius: 20, padding: "20px",
+              backdropFilter: "blur(10px)", borderRadius: 20, padding: "20px",
               boxShadow: "0 8px 30px rgba(0,0,0,0.08)",
               border: `1px solid ${light ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.05)"}`,
             }}>
-              <StatusRow light={light} icon="❤️"  label="Heart Rate"         value={vitals.bpm        ? `${vitals.bpm} BPM`         : na} tier={vitals.bpm > 150 || vitals.bpm < 40 ? "red" : vitals.bpm > 120 || vitals.bpm < 50 ? "orange" : vitals.bpm > 100 || vitals.bpm < 55 ? "yellow" : "stable"} />
-              <StatusRow light={light} icon="🫁"  label="Blood Oxygen"       value={vitals.spo2       ? `${vitals.spo2}%`            : na} tier={vitals.spo2 < 90 ? "red" : vitals.spo2 < 93 ? "orange" : vitals.spo2 < 95 ? "yellow" : "stable"} />
-              <StatusRow light={light} icon="💨"  label="Respiratory Rate"   value={vitals.rr         ? `${vitals.rr} /min`          : na} tier={vitals.rr > 30 || vitals.rr < 6 ? "red" : vitals.rr > 25 || vitals.rr < 8 ? "orange" : "stable"} />
-              <StatusRow light={light} icon="🌡️" label="Temperature"        value={vitals.temp       ? `${vitals.temp}°C`           : na} tier={vitals.temp > 39.4 ? "red" : vitals.temp > 38.5 ? "orange" : vitals.temp > 37.8 ? "yellow" : "stable"} />
-              <StatusRow light={light} icon="📊"  label="HRV"                value={vitals.hrv        ? `${vitals.hrv}ms`            : na} tier={vitals.hrv < 20 ? "red" : vitals.hrv < 30 ? "orange" : "stable"} />
-              <StatusRow light={light} icon="🚶"  label="Walking Steadiness" value={vitals.walkingSteadiness || na}                       tier={vitals.walkingSteadiness === "Very Low" ? "orange" : vitals.walkingSteadiness === "Low" ? "yellow" : "stable"} />
-              <StatusRow light={light} icon="😴"  label="Sleep"              value={vitals.sleepHours !== null ? `${vitals.sleepHours}h` : na} tier={vitals.sleepHours < 2 ? "orange" : vitals.sleepHours < 4 ? "yellow" : "stable"} />
-              <StatusRow light={light} icon="🔋"  label="Watch Battery"      value={vitals.battery    !== null ? `${vitals.battery}%`    : na} tier={vitals.battery < 10 ? "orange" : vitals.battery < 20 ? "yellow" : "stable"} />
-              <StatusRow light={light} icon="🔄"  label="Last Sync"          value={syncLabel}                                              tier="stable" />
-              {vitals.fallDetected && <StatusRow light={light} icon="⚠️" label="Fall Detected"    value="YES"      tier="red" />}
-              {vitals.afibDetected && <StatusRow light={light} icon="💓" label="Irregular Rhythm"  value="DETECTED" tier="red" />}
+              <StatusRow light={light} icon="❤️" label="Heart Rate" value={vitals.bpm ? `${vitals.bpm} BPM` : na} tier={vitals.bpm > 150 || vitals.bpm < 40 ? "red" : vitals.bpm > 120 || vitals.bpm < 50 ? "orange" : vitals.bpm > 100 || vitals.bpm < 55 ? "yellow" : "stable"} />
+              <StatusRow light={light} icon="🫁" label="Blood Oxygen" value={vitals.spo2 ? `${vitals.spo2}%` : na} tier={vitals.spo2 < 90 ? "red" : vitals.spo2 < 93 ? "orange" : vitals.spo2 < 95 ? "yellow" : "stable"} />
+              <StatusRow light={light} icon="💨" label="Respiratory Rate" value={vitals.rr ? `${vitals.rr} /min` : na} tier={vitals.rr > 30 || vitals.rr < 6 ? "red" : vitals.rr > 25 || vitals.rr < 8 ? "orange" : "stable"} />
+              <StatusRow light={light} icon="🌡️" label="Temperature" value={vitals.temp ? `${vitals.temp}°C` : na} tier={vitals.temp > 39.4 ? "red" : vitals.temp > 38.5 ? "orange" : vitals.temp > 37.8 ? "yellow" : "stable"} />
+              <StatusRow light={light} icon="📊" label="HRV" value={vitals.hrv ? `${vitals.hrv}ms` : na} tier={vitals.hrv < 20 ? "red" : vitals.hrv < 30 ? "orange" : "stable"} />
+              <StatusRow light={light} icon="🚶" label="Walking Steadiness" value={vitals.walkingSteadiness || na} tier={vitals.walkingSteadiness === "Very Low" ? "orange" : vitals.walkingSteadiness === "Low" ? "yellow" : "stable"} />
+              <StatusRow light={light} icon="😴" label="Sleep" value={vitals.sleepHours !== null ? `${vitals.sleepHours}h` : na} tier={vitals.sleepHours < 2 ? "orange" : vitals.sleepHours < 4 ? "yellow" : "stable"} />
+              <StatusRow light={light} icon="🔋" label="Watch Battery" value={vitals.battery !== null ? `${vitals.battery}%` : na} tier={vitals.battery < 10 ? "orange" : vitals.battery < 20 ? "yellow" : "stable"} />
+              <StatusRow light={light} icon="🔄" label="Last Sync" value={syncLabel} tier="stable" />
+              {vitals.fallDetected && <StatusRow light={light} icon="⚠️" label="Fall Detected" value="YES" tier="red" />}
+              {vitals.afibDetected && <StatusRow light={light} icon="💓" label="Irregular Rhythm" value="DETECTED" tier="red" />}
             </div>
           )}
         </div>
@@ -737,13 +722,13 @@ function AppScreen({ view, alertTier, alertMessages, vitals, sosFired, setSosFir
   );
 }
 
-// ─── Settings screen ───────────────────────────────────────────────────────────
+// --- Settings screen ---
 function SettingsScreen({ onBack, sleepStart, sleepEnd, onSleepChange }) {
-  const [flatline,  setFlatline]  = useState(true);
-  const [offline,   setOffline]   = useState(true);
-  const [patient,   setPatient]   = useState("Kathleen Cousens");
+  const [flatline, setFlatline] = useState(true);
+  const [offline, setOffline] = useState(true);
+  const [patient, setPatient] = useState("Kathleen Cousens");
   const [caretaker, setCaretaker] = useState("Ben");
-  const [editing,   setEditing]   = useState(null);
+  const [editing, setEditing] = useState(null);
 
   return (
     <div style={{
@@ -805,10 +790,6 @@ function SettingsScreen({ onBack, sleepStart, sleepEnd, onSleepChange }) {
               }
             </div>
           ))}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-            <span style={{ fontSize: 13, color: COLORS.slateLight }}>Status</span>
-            <span style={{ fontSize: 13, fontWeight: 700, color: COLORS.celadon }}>Stable</span>
-          </div>
           <button style={{
             width: "100%", padding: "13px 0", backgroundColor: COLORS.terracotta, color: COLORS.white,
             border: "none", borderRadius: 13, fontSize: 14, fontWeight: 600,
@@ -822,7 +803,7 @@ function SettingsScreen({ onBack, sleepStart, sleepEnd, onSleepChange }) {
   );
 }
 
-// ─── Root ──────────────────────────────────────────────────────────────────────
+// --- Root ---
 export default function WATCHaware() {
   const params = new URLSearchParams(window.location.search);
   const view   = params.get("view");
@@ -871,7 +852,6 @@ export default function WATCHaware() {
     setAlertTier("stable"); setAlertMessages([]); setSosFired(false);
   };
 
-  // 👇 ADD THIS NEW FUNCTION
   const handleCycleTier = () => {
     if (sosFired) {
       setSosFired(false);
@@ -882,8 +862,13 @@ export default function WATCHaware() {
     else if (alertTier === "red") setSosFired(true);
   };
 
+  const tabs = [
+    { id: "patient", label: "Patient View" },
+    { id: "caretaker", label: "Caretaker View" }
+  ];
+
   return (
-    <div style={{ minHeight: "100vh", width: "100%", overflowX: "hidden" }}>
+    <div style={{ minHeight: "100vh", width: "100%", overflowX: "hidden", backgroundColor: "#000" }}>
       <style>{STYLE_TAG}</style>
 
       {!locked && (
@@ -954,17 +939,10 @@ export default function WATCHaware() {
           />
         )}
       </div>
-      {/* DEV TEST BUTTON - REMOVE BEFORE LAUNCH */}
+
+      {/* DEV TEST BUTTON */}
       <button 
-        onClick={() => {
-          if (sosFired) {
-            setSosFired(false);
-            setAlertTier("stable");
-          } else if (alertTier === "stable") setAlertTier("yellow");
-          else if (alertTier === "yellow") setAlertTier("orange");
-          else if (alertTier === "orange") setAlertTier("red");
-          else if (alertTier === "red") setSosFired(true);
-        }}
+        onClick={handleCycleTier}
         style={{
           position: "fixed", bottom: 24, right: 24, zIndex: 9999,
           padding: "12px 20px", borderRadius: 30, border: "none",
@@ -975,9 +953,6 @@ export default function WATCHaware() {
       >
         🔄 Test State
       </button>
-    </div> // <-- This is the final closing div of your return statement
-  );
-}
     </div>
   );
 }
