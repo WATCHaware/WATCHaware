@@ -221,9 +221,9 @@ function StateLabel({ alertTier, sosFired, isActive, isCancelled }) {
 }
 
 // ─── Logo ──────────────────────────────────────────────────────────────────────
-function Logo({ subtitle, light }) {
+function Logo({ subtitle, light, onClick }) {
   return (
-    <div style={{ textAlign: "center", paddingTop: 52, paddingBottom: 4 }}>
+    <div onClick={onClick} style={{ textAlign: "center", paddingTop: 52, paddingBottom: 4, cursor: "pointer" }}>
       <div style={{ fontSize: 28, lineHeight: 1.1, display: "inline-block" }}>
         <span style={{ fontWeight: 800, letterSpacing: 1, color: light ? COLORS.white : COLORS.slate }}>WATCH</span>
         <span style={{ fontWeight: 300, fontStyle: "italic", color: light ? "rgba(255,255,255,0.9)" : COLORS.slate }}>aware</span>
@@ -344,6 +344,7 @@ function SlideAction({ label, onComplete, color = COLORS.slate, pulseGreen = fal
 }
 
 // ─── Hold button ───────────────────────────────────────────────────────────────
+// ─── Hold button ───────────────────────────────────────────────────────────────
 function HoldButton({ onFired, light }) {
   const [holding,  setHolding]  = useState(false);
   const [progress, setProgress] = useState(0);
@@ -368,12 +369,23 @@ function HoldButton({ onFired, light }) {
   const R = 140, C = 2 * Math.PI * R;
 
   return (
-    <div style={{ position: "relative", width: 300, height: 300, display: "flex", alignItems: "center", justifyContent: "center", margin: "10px 0" }}>
-      <svg width={300} height={300} style={{ position: "absolute", top: 0, left: 0, transform: "rotate(-90deg)" }}>
-        <circle cx={150} cy={150} r={R} fill="none" stroke={light ? "rgba(255,255,255,0.2)" : "rgba(211,131,92,0.2)"} strokeWidth={6} />
+    <div style={{ 
+      position: "relative", 
+      width: 300, 
+      height: 300, 
+      display: "flex", 
+      alignItems: "center", 
+      justifyContent: "center", 
+      // 👇 ADJUST THIS NUMBER TO PERFECTLY CENTER IT OVER YOUR LOTUS
+      marginTop: 65, 
+      marginBottom: 10 
+    }}>
+      <svg width={300} height={300} style={{ position: "absolute", top: 0, left: 0, transform: "rotate(-90deg)", pointerEvents: "none" }}>
+        {/* 👇 THIS KEEPS YOUR OUTER EDGE VISIBLE */}
+        <circle cx={150} cy={150} r={R} fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth={4} />
         {holding && (
           <circle cx={150} cy={150} r={R} fill="none"
-            stroke={light ? "rgba(255,255,255,0.8)" : COLORS.terracotta} strokeWidth={6}
+            stroke={light ? "rgba(255,255,255,0.9)" : COLORS.terracotta} strokeWidth={6}
             strokeDasharray={C} strokeDashoffset={C - (progress / 100) * C} strokeLinecap="round" />
         )}
       </svg>
@@ -383,29 +395,23 @@ function HoldButton({ onFired, light }) {
         onTouchEnd={end}
         style={{
           width: 258, height: 258, borderRadius: "50%",
-          background: holding
-            ? "radial-gradient(circle at 38% 28%, #E8956A, #D1835C 55%, #A8622E)"
-            : "radial-gradient(circle at 38% 28%, #E8956A, #D1835C 55%, #B06030)",
+          // 👇 MAKES THE INNER CIRCLE COMPLETELY TRANSPARENT
+          background: "transparent",
           display: "flex", alignItems: "center", justifyContent: "center",
-          boxShadow: holding
-            ? "0 8px 50px rgba(211,131,92,0.55), inset 0 -8px 20px rgba(0,0,0,0.2), inset 0 3px 8px rgba(255,255,255,0.15)"
-            : "0 12px 40px rgba(211,131,92,0.28), inset 0 -8px 20px rgba(0,0,0,0.15), inset 0 3px 8px rgba(255,255,255,0.2)",
           cursor: "pointer",
-          opacity: 0.85,
           transform: holding ? "scale(0.96)" : "scale(1)",
-          transition: "transform 0.1s ease, box-shadow 0.2s ease",
+          transition: "transform 0.1s ease",
           touchAction: "none", position: "relative", overflow: "hidden",
           userSelect: "none",
         }}
       >
-        <div style={{
-          position: "absolute", top: 14, left: 38, width: 100, height: 48,
-          borderRadius: "50%", background: "rgba(255,255,255,0.18)",
-          filter: "blur(6px)", transform: "rotate(-20deg)", pointerEvents: "none",
-        }} />
         <span style={{
-          fontSize: 50, fontWeight: 700, color: COLORS.white, letterSpacing: 3,
+          fontSize: 50, fontWeight: 700, 
+          color: COLORS.white, 
+          letterSpacing: 3,
           position: "relative", userSelect: "none", WebkitUserSelect: "none", pointerEvents: "none",
+          // 👇 SUBTLE SHADOW SO IT POPS AGAINST THE BACKGROUND
+          textShadow: "0 2px 10px rgba(0,0,0,0.25)"
         }}>SOS</span>
       </div>
     </div>
@@ -543,7 +549,7 @@ function StatusRow({ icon, label, value, tier, light }) {
 }
 
 // ─── Shared app screen ─────────────────────────────────────────────────────────
-function AppScreen({ view, alertTier, alertMessages, vitals, sosFired, setSosFired, onAcknowledge, onSettings }) {
+function AppScreen({ view, alertTier, alertMessages, vitals, sosFired, setSosFired, onAcknowledge, onSettings, onCycleTier }) {
   const isPatient   = view === "patient";
   const isCaretaker = view === "caretaker";
   const tierKey     = sosFired ? "sos" : alertTier;
@@ -638,7 +644,11 @@ function AppScreen({ view, alertTier, alertMessages, vitals, sosFired, setSosFir
       }}>
         {/* Header */}
         <div style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "0 24px" }}>
-          <Logo subtitle={`${isPatient ? "Patient" : "Caregiver"}  ·  ${time}`} light={light} />
+          <Logo 
+            subtitle={`${isPatient ? "Patient" : "Caregiver"}  ·  ${time}`} 
+            light={light} 
+            onClick={onCycleTier} // 👈 ADD THIS LINE
+          />
           {isCaretaker && (
             <button onClick={onSettings} style={{ background: "none", border: "none", cursor: "pointer", marginTop: 52, fontSize: 20, opacity: 0.7 }}>⚙️</button>
           )}
@@ -861,10 +871,16 @@ export default function WATCHaware() {
     setAlertTier("stable"); setAlertMessages([]); setSosFired(false);
   };
 
-  const tabs = [
-    { id: "patient",   label: "Patient"   },
-    { id: "caretaker", label: "Caregiver" },
-    { id: "settings",  label: "Settings"  },
+  // 👇 ADD THIS NEW FUNCTION
+  const handleCycleTier = () => {
+    if (sosFired) {
+      setSosFired(false);
+      setAlertTier("stable");
+    } else if (alertTier === "stable") setAlertTier("yellow");
+    else if (alertTier === "yellow") setAlertTier("orange");
+    else if (alertTier === "orange") setAlertTier("red");
+    else if (alertTier === "red") setSosFired(true);
+  };
   ];
 
   return (
@@ -914,6 +930,7 @@ export default function WATCHaware() {
             }}
             onAcknowledge={handleAcknowledge}
             onSettings={() => { if (!locked) setScreen("settings"); }}
+            onCycleTier={handleCycleTier}
           />
         )}
         {(screen === "caretaker" || (locked && view === "caretaker")) && (
@@ -926,6 +943,7 @@ export default function WATCHaware() {
             setSosFired={setSosFired}
             onAcknowledge={handleAcknowledge}
             onSettings={() => { if (!locked) setScreen("settings"); }}
+            onCycleTier={handleCycleTier}
           />
         )}
         {screen === "settings" && !locked && (
@@ -937,6 +955,30 @@ export default function WATCHaware() {
           />
         )}
       </div>
+      {/* DEV TEST BUTTON - REMOVE BEFORE LAUNCH */}
+      <button 
+        onClick={() => {
+          if (sosFired) {
+            setSosFired(false);
+            setAlertTier("stable");
+          } else if (alertTier === "stable") setAlertTier("yellow");
+          else if (alertTier === "yellow") setAlertTier("orange");
+          else if (alertTier === "orange") setAlertTier("red");
+          else if (alertTier === "red") setSosFired(true);
+        }}
+        style={{
+          position: "fixed", bottom: 24, right: 24, zIndex: 9999,
+          padding: "12px 20px", borderRadius: 30, border: "none",
+          backgroundColor: "rgba(0,0,0,0.6)", color: "#FFF",
+          backdropFilter: "blur(8px)", fontSize: 13, fontWeight: 700, 
+          cursor: "pointer", boxShadow: "0 4px 16px rgba(0,0,0,0.3)"
+        }}
+      >
+        🔄 Test State
+      </button>
+    </div> // <-- This is the final closing div of your return statement
+  );
+}
     </div>
   );
 }
