@@ -7,25 +7,6 @@
   schedule = "0 12 * * *"
 
 [[redirects]]
-  from = "/patient"
-  to = "/app.html?view=patient"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/care"
-  to = "/app.html?view=caretaker"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/app.html"
-  to = "/app.html"
-  status = 200
-  force = true
-
-[[redirects]]
   from = "/*"
   to = "/landing.html"
   status = 200
-

@@ -196,11 +196,10 @@ const getLocation = () => new Promise((resolve) => {
   );
 });
 
-// ─── Background image wrapper ──────────────────────────────────────────────────
+// ─── Background ────────────────────────────────────────────────────────────────
 function AppBackground({ tier, sosFired, children }) {
   const t      = sosFired ? ALERT_TIERS.sos : (ALERT_TIERS[tier] || ALERT_TIERS.stable);
   const bgFile = t.bg;
-
   return (
     <div style={{
       minHeight: "100vh",
@@ -240,9 +239,10 @@ function Orb({ alertTier, sosFired, patientBpm, size = 280 }) {
         boxShadow: "inset 0 -8px 20px rgba(0,0,0,0.12), inset 0 2px 6px rgba(255,255,255,0.25)",
       }}>
         <div style={{
-          position: "absolute", top: 18, left: Math.round(size * 0.11), width: Math.round(size * 0.32), height: Math.round(size * 0.16),
-          borderRadius: "50%", background: "rgba(255,255,255,0.22)", filter: "blur(6px)",
-          transform: "rotate(-20deg)", pointerEvents: "none",
+          position: "absolute", top: 18, left: Math.round(size * 0.11),
+          width: Math.round(size * 0.32), height: Math.round(size * 0.16),
+          borderRadius: "50%", background: "rgba(255,255,255,0.22)",
+          filter: "blur(6px)", transform: "rotate(-20deg)", pointerEvents: "none",
         }} />
         <div style={{ position: "absolute", inset: 0, borderRadius: "50%", border: "1.5px solid rgba(255,255,255,0.18)", pointerEvents: "none" }} />
         <div style={{ position: "absolute", width: "55%", height: 1, backgroundColor: "rgba(255,255,255,0.3)", top: "46%" }} />
@@ -253,13 +253,17 @@ function Orb({ alertTier, sosFired, patientBpm, size = 280 }) {
         {patientBpm > 0 && (
           <div style={{
             fontSize: Math.round(size * 0.079), fontWeight: 700, color: COLORS.white,
-            textShadow: "0 2px 8px rgba(0,0,0,0.3)", letterSpacing: 1, marginBottom: Math.round(size * 0.02),
+            textShadow: "0 2px 8px rgba(0,0,0,0.3)", letterSpacing: 1,
+            marginBottom: Math.round(size * 0.02),
           }}>
             {patientBpm}
             <span style={{ fontSize: Math.round(size * 0.036), fontWeight: 400, letterSpacing: 2, marginLeft: 4, opacity: 0.8 }}>BPM</span>
           </div>
         )}
-        <div style={{ fontSize: Math.round(size * 0.04), fontWeight: 700, letterSpacing: 3, color: tier.labelColor, textShadow: "0 1px 4px rgba(0,0,0,0.2)" }}>
+        <div style={{
+          fontSize: Math.round(size * 0.04), fontWeight: 700, letterSpacing: 3,
+          color: tier.labelColor, textShadow: "0 1px 4px rgba(0,0,0,0.2)",
+        }}>
           {tier.emoji ? `${tier.emoji} ${tier.label}` : tier.label}
         </div>
       </div>
@@ -267,7 +271,7 @@ function Orb({ alertTier, sosFired, patientBpm, size = 280 }) {
   );
 }
 
-// ─── State label block ─────────────────────────────────────────────────────────
+// ─── State label ───────────────────────────────────────────────────────────────
 function StateLabel({ alertTier, sosFired, isActive, isCancelled }) {
   const tierKey = sosFired ? "sos" : alertTier;
   const tier    = ALERT_TIERS[tierKey] || ALERT_TIERS.stable;
@@ -276,7 +280,7 @@ function StateLabel({ alertTier, sosFired, isActive, isCancelled }) {
   if (isCancelled) {
     return (
       <div style={{ textAlign: "center", padding: "0 32px", animation: "fadeIn 0.4s ease" }}>
-        <div style={{ fontSize: 13, color: COLORS.celadon, fontWeight: 600, letterSpacing: 0.3 }}>
+        <div style={{ fontSize: 13, color: COLORS.celadon, fontWeight: 600 }}>
           ✅ All clear. Your caregivers have been notified.
         </div>
       </div>
@@ -298,23 +302,17 @@ function StateLabel({ alertTier, sosFired, isActive, isCancelled }) {
 
   return (
     <div style={{ textAlign: "center", padding: "0 32px", animation: "fadeIn 1s ease 0.3s both" }}>
-      <div style={{
-        fontSize: 15, fontWeight: 700, letterSpacing: 1.5,
-        color: light ? COLORS.white : COLORS.slate,
-        marginBottom: 6,
-      }}>
+      <div style={{ fontSize: 15, fontWeight: 700, letterSpacing: 1.5, color: light ? COLORS.white : COLORS.slate, marginBottom: 6 }}>
         {tier.label}
       </div>
-      <div style={{
-        fontSize: 12, lineHeight: 1.6,
-        color: light ? "rgba(255,255,255,0.75)" : COLORS.slateLight,
-      }}>
+      <div style={{ fontSize: 12, lineHeight: 1.6, color: light ? "rgba(255,255,255,0.75)" : COLORS.slateLight }}>
         {tier.sublabel}
       </div>
     </div>
   );
 }
 
+// ─── Logo ──────────────────────────────────────────────────────────────────────
 function Logo({ subtitle, light }) {
   return (
     <div style={{ textAlign: "center", paddingTop: 52, paddingBottom: 4 }}>
@@ -466,7 +464,8 @@ function HoldButton({ onFired, light }) {
       <svg width={300} height={300} style={{ position: "absolute", top: 0, left: 0, transform: "rotate(-90deg)" }}>
         <circle cx={150} cy={150} r={R} fill="none" stroke={light ? "rgba(255,255,255,0.2)" : "rgba(211,131,92,0.2)"} strokeWidth={6} />
         {holding && (
-          <circle cx={150} cy={150} r={R} fill="none" stroke={light ? "rgba(255,255,255,0.8)" : COLORS.terracotta} strokeWidth={6}
+          <circle cx={150} cy={150} r={R} fill="none"
+            stroke={light ? "rgba(255,255,255,0.8)" : COLORS.terracotta} strokeWidth={6}
             strokeDasharray={C} strokeDashoffset={C - (progress / 100) * C} strokeLinecap="round" />
         )}
       </svg>
@@ -492,12 +491,13 @@ function HoldButton({ onFired, light }) {
         }}
       >
         <div style={{
-          position: "absolute", top: 14, left: 38, width: 100, height: 48, borderRadius: "50%",
-          background: "rgba(255,255,255,0.18)", filter: "blur(6px)", transform: "rotate(-20deg)", pointerEvents: "none",
+          position: "absolute", top: 14, left: 38, width: 100, height: 48,
+          borderRadius: "50%", background: "rgba(255,255,255,0.18)",
+          filter: "blur(6px)", transform: "rotate(-20deg)", pointerEvents: "none",
         }} />
         <span style={{
-          fontSize: 50, fontWeight: 700, color: COLORS.white, letterSpacing: 3, position: "relative",
-          userSelect: "none", WebkitUserSelect: "none", pointerEvents: "none",
+          fontSize: 50, fontWeight: 700, color: COLORS.white, letterSpacing: 3,
+          position: "relative", userSelect: "none", WebkitUserSelect: "none", pointerEvents: "none",
         }}>SOS</span>
       </div>
     </div>
@@ -559,9 +559,15 @@ function SleepDial({ startHour, endHour, onChange }) {
         <text x={CX} y={CY - 2}  textAnchor="middle" fontSize={14} fill={textColor} fontWeight={700}>{fmt(startHour)}</text>
         <text x={CX} y={CY + 16} textAnchor="middle" fontSize={11} fill={subColor}>to {fmt(endHour)}</text>
         <text x={CX} y={CY + 30} textAnchor="middle" fontSize={8}  fill={subColor} letterSpacing={0.5}>EST · {palette.label}</text>
-        <circle cx={sunPos.x} cy={sunPos.y} r={20} fill="#F5C842" stroke={COLORS.white} strokeWidth={3} style={{ cursor: "grab", filter: "drop-shadow(0 3px 8px rgba(245,200,66,0.6))" }} onMouseDown={e => { e.preventDefault(); dragging.current = "start"; }} onTouchStart={e => { e.preventDefault(); dragging.current = "start"; }} />
+        <circle cx={sunPos.x} cy={sunPos.y} r={20} fill="#F5C842" stroke={COLORS.white} strokeWidth={3}
+          style={{ cursor: "grab", filter: "drop-shadow(0 3px 8px rgba(245,200,66,0.6))" }}
+          onMouseDown={e => { e.preventDefault(); dragging.current = "start"; }}
+          onTouchStart={e => { e.preventDefault(); dragging.current = "start"; }} />
         <text x={sunPos.x} y={sunPos.y + 6} textAnchor="middle" fontSize={15} style={{ pointerEvents: "none" }}>☀️</text>
-        <circle cx={moonPos.x} cy={moonPos.y} r={20} fill="#89A4C7" stroke={COLORS.white} strokeWidth={3} style={{ cursor: "grab", filter: "drop-shadow(0 3px 8px rgba(137,164,199,0.6))" }} onMouseDown={e => { e.preventDefault(); dragging.current = "end"; }} onTouchStart={e => { e.preventDefault(); dragging.current = "end"; }} />
+        <circle cx={moonPos.x} cy={moonPos.y} r={20} fill="#89A4C7" stroke={COLORS.white} strokeWidth={3}
+          style={{ cursor: "grab", filter: "drop-shadow(0 3px 8px rgba(137,164,199,0.6))" }}
+          onMouseDown={e => { e.preventDefault(); dragging.current = "end"; }}
+          onTouchStart={e => { e.preventDefault(); dragging.current = "end"; }} />
         <text x={moonPos.x} y={moonPos.y + 6} textAnchor="middle" fontSize={14} style={{ pointerEvents: "none" }}>🌙</text>
       </svg>
       <div style={{ fontSize: 10, color: COLORS.slateLight, letterSpacing: 0.5 }}>Drag ☀️ wake · drag 🌙 sleep</div>
@@ -569,6 +575,7 @@ function SleepDial({ startHour, endHour, onChange }) {
   );
 }
 
+// ─── Toggle ────────────────────────────────────────────────────────────────────
 function Toggle({ value, onChange }) {
   return (
     <div onClick={() => onChange(!value)} style={{
@@ -585,6 +592,7 @@ function Toggle({ value, onChange }) {
   );
 }
 
+// ─── Alert banner ──────────────────────────────────────────────────────────────
 function AlertBanner({ tier, sosFired, messages, light }) {
   const tierKey = sosFired ? "sos" : tier;
   const t = ALERT_TIERS[tierKey];
@@ -611,6 +619,7 @@ function AlertBanner({ tier, sosFired, messages, light }) {
   );
 }
 
+// ─── Status row ────────────────────────────────────────────────────────────────
 function StatusRow({ icon, label, value, tier, light }) {
   const color = tier === "red"    ? (light ? "#FF8080" : "#C0392B")
               : tier === "orange" ? (light ? "#FFB347" : "#E67E22")
@@ -625,13 +634,13 @@ function StatusRow({ icon, label, value, tier, light }) {
   );
 }
 
-// ─── Shared app screen — used by BOTH patient and caretaker ───────────────────
+// ─── Shared app screen ─────────────────────────────────────────────────────────
 function AppScreen({ view, alertTier, alertMessages, vitals, sosFired, setSosFired, onAcknowledge, onSettings }) {
-  const isPatient    = view === "patient";
-  const isCaretaker  = view === "caretaker";
-  const tierKey      = sosFired ? "sos" : alertTier;
-  const tier         = ALERT_TIERS[tierKey] || ALERT_TIERS.stable;
-  const light        = tier.textLight;
+  const isPatient   = view === "patient";
+  const isCaretaker = view === "caretaker";
+  const tierKey     = sosFired ? "sos" : alertTier;
+  const tier        = ALERT_TIERS[tierKey] || ALERT_TIERS.stable;
+  const light       = tier.textLight;
 
   const [time,          setTime]          = useState("");
   const [cancelled,     setCancelled]     = useState(false);
@@ -719,7 +728,6 @@ function AppScreen({ view, alertTier, alertMessages, vitals, sosFired, setSosFir
         maxWidth: 430, margin: "0 auto", paddingBottom: 52,
         fontFamily: "'SF Pro Display','Helvetica Neue',system-ui,sans-serif",
       }}>
-
         {/* Header */}
         <div style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "0 24px" }}>
           <Logo subtitle={`${isPatient ? "Patient" : "Caregiver"}  ·  ${time}`} light={light} />
@@ -731,7 +739,6 @@ function AppScreen({ view, alertTier, alertMessages, vitals, sosFired, setSosFir
         {/* Main content */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, justifyContent: "center", gap: 16, width: "100%" }}>
 
-          {/* Orb — patient gets smaller orb above button, caretaker gets large orb */}
           {isPatient ? (
             <>
               <Orb alertTier={alertTier} sosFired={sosFired} patientBpm={vitals.bpm} size={180} />
@@ -741,21 +748,20 @@ function AppScreen({ view, alertTier, alertMessages, vitals, sosFired, setSosFir
             <Orb alertTier={alertTier} sosFired={sosFired} patientBpm={vitals.bpm} size={280} />
           )}
 
-          {/* State label */}
           <StateLabel alertTier={alertTier} sosFired={sosFired} isActive={sosFired} isCancelled={cancelled} />
 
-          {/* Patient cancel slider */}
+          {/* Patient hint + cancel slider */}
           {isPatient && (
             <div style={{ width: "82%", display: "flex", flexDirection: "column", gap: 6, alignItems: "center" }}>
+              {!sosFired && !cancelled && (
+                <div style={{ fontSize: 11, color: light ? "rgba(255,255,255,0.6)" : COLORS.slateLight, textAlign: "center", lineHeight: 1.6 }}>
+                  If you need help, hold this button for 3 seconds.{"\n"}
+                  {locationReady ? "Your caregivers will be notified with your location." : "Your caregivers will be notified immediately."}
+                </div>
+              )}
               {sosFired && !cancelled && (
                 <div style={{ fontSize: 10, color: light ? "rgba(255,255,255,0.6)" : COLORS.slateLight, letterSpacing: 1.5, textAlign: "center" }}>
                   FALSE ALARM? SLIDE TO CANCEL
-                </div>
-              )}
-              {!sosFired && !cancelled && (
-                <div style={{ fontSize: 11, color: light ? "rgba(255,255,255,0.6)" : COLORS.slateLight, letterSpacing: 0.3, textAlign: "center", lineHeight: 1.5 }}>
-                  If you need help, hold this button for 3 seconds.{"\n"}
-                  {locationReady ? "Your caregivers will be notified with your location." : "Your caregivers will be notified immediately."}
                 </div>
               )}
               <SlideAction
@@ -807,8 +813,8 @@ function AppScreen({ view, alertTier, alertMessages, vitals, sosFired, setSosFir
               <StatusRow light={light} icon="😴"  label="Sleep"              value={vitals.sleepHours !== null ? `${vitals.sleepHours}h` : na} tier={vitals.sleepHours < 2 ? "orange" : vitals.sleepHours < 4 ? "yellow" : "stable"} />
               <StatusRow light={light} icon="🔋"  label="Watch Battery"      value={vitals.battery    !== null ? `${vitals.battery}%`    : na} tier={vitals.battery < 10 ? "orange" : vitals.battery < 20 ? "yellow" : "stable"} />
               <StatusRow light={light} icon="🔄"  label="Last Sync"          value={syncLabel}                                              tier="stable" />
-              {vitals.fallDetected && <StatusRow light={light} icon="⚠️" label="Fall Detected"   value="YES"      tier="red" />}
-              {vitals.afibDetected && <StatusRow light={light} icon="💓" label="Irregular Rhythm" value="DETECTED" tier="red" />}
+              {vitals.fallDetected && <StatusRow light={light} icon="⚠️" label="Fall Detected"    value="YES"      tier="red" />}
+              {vitals.afibDetected && <StatusRow light={light} icon="💓" label="Irregular Rhythm"  value="DETECTED" tier="red" />}
             </div>
           )}
         </div>
@@ -834,7 +840,10 @@ function SettingsScreen({ onBack, sleepStart, sleepEnd, onSleepChange }) {
       <div style={{ width: "100%", maxWidth: 430, display: "flex", alignItems: "center", padding: "0 20px" }}>
         <button onClick={onBack} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 22, color: COLORS.terracotta, marginTop: 40, padding: 4 }}>←</button>
         <div style={{ flex: 1, textAlign: "center", paddingTop: 44, paddingBottom: 4 }}>
-          <div style={{ fontSize: 24, fontWeight: 800, color: COLORS.slate, letterSpacing: 1 }}>WATCH<span style={{ fontWeight: 300, fontStyle: "italic" }}>aware</span></div>
+          <div style={{ fontSize: 24, color: COLORS.slate }}>
+            <span style={{ fontWeight: 800 }}>WATCH</span>
+            <span style={{ fontWeight: 300, fontStyle: "italic" }}>aware</span>
+          </div>
           <div style={{ fontSize: 11, color: COLORS.slateLight, marginTop: 4, letterSpacing: 0.5 }}>Settings</div>
         </div>
         <div style={{ width: 32 }} />
@@ -1027,3 +1036,4 @@ export default function WATCHaware() {
     </div>
   );
 }
+

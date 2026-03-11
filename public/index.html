@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>WATCHaware</title>
-  <meta name="description" content="Passive health monitoring for the people you love." />
+  <meta name="description" content="Passive monitoring for the people you love." />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; font-family: 'SF Pro Display', 'Helvetica Neue', system-ui, sans-serif; }
@@ -19,9 +19,7 @@
       justify-content: space-between;
       padding: 52px 32px 48px;
     }
-    .logo {
-      text-align: center;
-    }
+    .logo { text-align: center; }
     .logo-mark {
       font-size: 32px;
       line-height: 1;
@@ -58,15 +56,11 @@
       text-decoration: none;
       cursor: pointer;
       transition: opacity 0.2s ease, transform 0.1s ease;
-      /* Glass effect */
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(255,255,255,0.5);
     }
-    .btn:active {
-      opacity: 0.85;
-      transform: scale(0.97);
-    }
+    .btn:active { opacity: 0.85; transform: scale(0.97); }
     .btn-patient {
       background: linear-gradient(135deg, rgba(209,131,92,0.55), rgba(209,131,92,0.35));
       color: #4A4A4A;
@@ -89,14 +83,14 @@
   <div class="page">
     <div class="logo">
       <div class="logo-mark"><span>WATCH</span><em>aware</em></div>
-      <div class="logo-sub">Health Monitoring</div>
+      <div class="logo-sub">Monitoring</div>
     </div>
 
     <div class="spacer"></div>
 
     <div class="buttons">
-      <a href="/patient" class="btn btn-patient">I am the<br/>patient</a>
-      <a href="/care" class="btn btn-care">I am a<br/>caregiver</a>
+      <a href="/app.html?view=patient" class="btn btn-patient">I am the<br/>patient</a>
+      <a href="/app.html?view=caretaker" class="btn btn-care">I am a<br/>caregiver</a>
     </div>
     <div class="footer">WATCHAWARE · PRIVATE &amp; SECURE</div>
   </div>
