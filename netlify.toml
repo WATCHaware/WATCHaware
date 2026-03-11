@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "npm run build && cp public/index.html build/landing.html && mv build/index.html build/app.html"
   publish = "build"
   functions = "netlify/functions"
 
@@ -28,5 +28,5 @@
 
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/landing.html"
   status = 200
