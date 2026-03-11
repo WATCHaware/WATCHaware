@@ -633,7 +633,7 @@ function HoldButton({ onFired, light }) {
           position: "relative",
           overflow: "hidden",
           userSelect: "none",
-          margin-top: -20
+          marginTop: -20,
         }}
       >
         <span
@@ -1149,7 +1149,7 @@ function AppScreen({
                   }}
                 >
                   {`If you need help, hold this button for 3 seconds.
-${locationReady ? "Your caregivers will be notified with your location." : "Your caregivers will be notified immediately."}`}
+${locationReady ? }`}
                 </div>
               )}
 
